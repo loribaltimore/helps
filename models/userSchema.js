@@ -1,5 +1,6 @@
 let mongoose = require('mongoose');
 let { Schema, model } = mongoose;
+let PassportLocalMongoose = require('passport-local-mongoose');
 
 let userSchema = new Schema({
     username: {
@@ -94,6 +95,9 @@ let userSchema = new Schema({
         }
     }
 });
+
+//Connect User with Passport for Authentication
+userSchema.plugin(PassportLocalMongoose);
 
 let User = model('user', userSchema);
 
