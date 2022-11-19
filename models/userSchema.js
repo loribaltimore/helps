@@ -93,6 +93,12 @@ let userSchema = new Schema({
             required: true,
             default: 0
         }
+    },
+    charities: {
+        interests: {
+            type: Array,
+            default: []
+        }
     }
 });
 

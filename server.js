@@ -36,12 +36,13 @@ app.prepare().then(() => {
     let flash = require('connect-flash');
     let cors = require('cors');
     let passport = require('passport');
-    let  LocalStrategy = require('passport-local');
+    let LocalStrategy = require('passport-local');
 
     //Required Middleware
     server.use(bodyParser.urlencoded({ extended: true }));
     server.use(cookieParser('secret'));
     server.use(methodOverride('_method'));
+    server.use(express.json());
     server.use(session({
         resave: false,
         saveUninitialized: true,
@@ -64,6 +65,7 @@ app.prepare().then(() => {
     let errHandler = require('./middleware/errorHandling');
     let { getLanding } = require('./controllers/landing');
     let { getCharitiesByCause } = require('./controllers/charity');
+    let { signupPost } = require('./controllers/signupController');
 
 
     //Routes
@@ -73,6 +75,7 @@ app.prepare().then(() => {
 
     server.get('/charities/:cause', getCharitiesByCause);
 
+    server.post('/signup', signupPost);
 
     server.get('/error', errHandler);
 
