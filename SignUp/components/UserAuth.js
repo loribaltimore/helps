@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import Item from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Link from 'next/link';
 
 function UserAuth(props) {
     let {setAuth, auth, contact, billing, shipping, bio, interests} = useContext(SignUpContext);
@@ -52,9 +53,11 @@ function UserAuth(props) {
                 </Grid>
                 {
                     username && pass ?
-                    <Button variant="contained" onClick={() => handleClick()}>
-                    Create Profile
-                    </Button> : ''
+                        <Link href={'/'}>
+                            <Button variant="contained" onClick={() => handleClick()}>
+                                    Create Profile
+                            </Button>
+                        </Link> : ''
                 } 
             </Container>
         </div>

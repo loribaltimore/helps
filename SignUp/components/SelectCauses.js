@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Item from '@mui/material/Grid';
 import Cause from './Cause';
-import charityCauses from '../functions/charityCauses.js';
+import charityCauses from '../util/charityCauses.js';
 import Pagination from '@mui/material/Pagination'
 import { useState, useContext } from 'react';
 import { SignUpContext } from '../components/SignUpContext';

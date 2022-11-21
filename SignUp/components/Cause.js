@@ -11,7 +11,6 @@ function Cause(props) {
     };
     let styleStatus = styles.unselected;
     if (interests !== undefined) {
-        console.log(interests);
         if (interests.indexOf(cause) > -1) {
             styleStatus = styles.selected;
         };

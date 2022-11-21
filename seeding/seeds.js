@@ -33,4 +33,11 @@ let seedUser = async () => {
     console.log(newUser);
 };
 
-seedUser();
+// seedUser();
+
+let cleanUsers = async () => {
+    await User.deleteMany({});
+    console.log('Users Deleted!')
+};
+
+// cleanUsers();

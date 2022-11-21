@@ -65,19 +65,33 @@ app.prepare().then(() => {
     let errHandler = require('./middleware/errorHandling');
     let { getLanding } = require('./controllers/landing');
     let { getCharitiesByCause } = require('./controllers/charity');
-    let { signupPost } = require('./controllers/signupController');
-
+    let { signupPost } = require('./SignUp/controllers/signupController');
+    let { loginPost } = require('./Login/controllers/loginControllers');
+    let getSession = require('./functions/getSession');
 
     //Routes
     server.get('/', async (req, res, next) => {
+        console.log(req.session);
         return app.render(req, res, '/landing', {});
     });
 
+//API Routes
     server.get('/charities/:cause', getCharitiesByCause);
+    server.get('/session', async (req, res, next) => {
+        res.send(req.session);
+    });
 
+//login Routes
+    server.get('/login', async (req, res, next) => {
+        return app.render(req, res, '/login', {});
+    });
+    server.post('/login', passport.authenticate('local', {failureRedirect: '/login'}), loginPost);
+
+//Signup Routes
     server.post('/signup', signupPost);
 
-    server.get('/error', errHandler);
+    //Error Handling Middleware
+    server.use(errHandler);
 
 
 
@@ -87,6 +101,3 @@ app.prepare().then(() => {
 });
 
 });
-
-///make sure we're getting interfacing with charity API correction
-///line 55

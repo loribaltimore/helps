@@ -1,5 +1,6 @@
 let generateUser =  function (bio, shipping, billing, contact, auth, interests) {
    let newUser = {
+      username: auth.username,
       bio: bio,
       address: {
          shipping: {

@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import Item from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import allStates from '../seeding/allStates';
+import allStates from '../util/allStates';
 
 
 function UserInformation(props) {

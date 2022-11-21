@@ -2,7 +2,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import allStates from '../seeding/allStates';
+import allStates from '../util/allStates';
 import { useState } from 'react';
 
 function StateInput(props) {
@@ -23,7 +23,7 @@ function StateInput(props) {
    onChange={(event) => handleChange(event)}>
             {
                         allStates.map(function (element, index) {
-                        return <MenuItem value={element}>{element}</MenuItem>
+                        return <MenuItem key={index} value={element}>{element}</MenuItem>
                  })       
          }           
   </Select>

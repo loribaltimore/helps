@@ -1,8 +1,8 @@
-import UserInformation from '../components/UserInformation';
-import SelectCauses from '../components/SelectCauses';
-import UserAddress from '../components/UserAddress';
-import UserContact from '../components/UserContact';
-import UserAuth from '../components/UserAuth';
+import UserInformation from '../signUp/components/UserInformation';
+import SelectCauses from '../signUp/components/SelectCauses';
+import UserAddress from '../signUp/components/UserAddress';
+import UserContact from '../signUp/components/UserContact';
+import UserAuth from '../signUp/components/UserAuth';
 import { useState } from 'react';
 
 
@@ -42,6 +42,3 @@ function SignUp(props) {
 };
 
 export default SignUp;
-
-///continue with create user,
-//UserAddress => handleClick => setRenderAddress not working
