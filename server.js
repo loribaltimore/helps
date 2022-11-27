@@ -44,11 +44,12 @@ app.prepare().then(() => {
     server.use(methodOverride('_method'));
     server.use(express.json());
     server.use(session({
-        resave: false,
-        saveUninitialized: true,
+        resave: true,
+        saveUninitialized: false,
         name: 'helpsSession',
         secret: 'thisIsASecret',
         cookie: {
+            test: Math.floor(Math.random() * 100),
             httpOnly: true,
             maxAge: 300000
         }
@@ -56,6 +57,8 @@ app.prepare().then(() => {
     server.use(flash());
     server.use(cors());
     server.use(passport.initialize());
+    server.use(passport.session());
+
     passport.use(new LocalStrategy(User.authenticate()));
     passport.serializeUser(User.serializeUser());
     passport.deserializeUser(User.deserializeUser());
@@ -64,31 +67,48 @@ app.prepare().then(() => {
     //Custom Middleware
     let errHandler = require('./middleware/errorHandling');
     let { getLanding } = require('./controllers/landing');
-    let { getCharitiesByCause } = require('./controllers/charity');
+    let { charityByCause } = require('./Explore/controllers/charityControllers');
+    let charityByName = require('./Explore/functions/charityByName');
     let { signupPost } = require('./SignUp/controllers/signupController');
-    let { loginPost } = require('./Login/controllers/loginControllers');
+    let { loginPost, logout} = require('./Login/controllers/loginControllers');
     let getSession = require('./functions/getSession');
 
     //Routes
     server.get('/', async (req, res, next) => {
+        console.log('THIS IS SESSION ON LOADING LANDING');
+        req.session.test = 'IM HERE'
         console.log(req.session);
         return app.render(req, res, '/landing', {});
     });
 
+    server.get('/explore', async (req, res, next) => {
+        app.render(req, res, '/userExplore', {});
+    });
+
 //API Routes
-    server.get('/charities/:cause', getCharitiesByCause);
+    server.get('/explore/charities/:cause', charityByCause);
+
+    // server.get('/charities/:charityName', async (req, res, next) => {
+    //     await charityByName(req, res, next);
+    //     app.render(req, res, '/charityPage', {});
+    // });
+
     server.get('/session', async (req, res, next) => {
-        res.send(req.session);
+        console.log('THIS IS THE SESSION SERVER SIDE');
+        console.log(req.session);
+        res.send({ flash: req.session.flash, user: req.user });
     });
 
 //login Routes
     server.get('/login', async (req, res, next) => {
-        return app.render(req, res, '/login', {});
+      app.render(req, res, '/userLogin', {});
     });
-    server.post('/login', passport.authenticate('local', {failureRedirect: '/login'}), loginPost);
+    server.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), loginPost);
+    server.get('/logout', logout);
 
 //Signup Routes
     server.post('/signup', signupPost);
+
 
     //Error Handling Middleware
     server.use(errHandler);
@@ -101,3 +121,12 @@ app.prepare().then(() => {
 });
 
 });
+
+
+//make each cause request a request for only the amount you need to make it faster
+//set up charity page with larger explanation of charity => allow add/heart/spread
+///useRef for currentUser and flash / server related info instead of
+///centralized state in MainContext
+///Then I can just use getInitialProps on each page to only get information 
+//if/ when i need it to avoid unnuecessary re renders
+//useMemo to only load components I need to load

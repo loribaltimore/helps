@@ -35,9 +35,27 @@ let seedUser = async () => {
 
 // seedUser();
 
-let cleanUsers = async () => {
-    await User.deleteMany({});
-    console.log('Users Deleted!')
-};
+// let cleanUsers = async () => {
+//     await User.deleteMany({});
+//     console.log('Users Deleted!')
+// };
 
 // cleanUsers();
+
+let seedInterests = async () => {
+    let allUsers = await User.find({});
+
+    allUsers.forEach(async (element, index) => {
+        element.charities.interests = [
+            'christianity',
+            'climate',
+            'conservation',
+            'coronavirus',
+            'culture',
+        ]
+        await element.save();
+    });
+console.log('finished!')
+};
+
+seedInterests();

@@ -30,10 +30,15 @@
       "static/chunks/main.js",
       "static/chunks/pages/landing.js"
     ],
-    "/login": [
+    "/userExplore": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/login.js"
+      "static/chunks/pages/userExplore.js"
+    ],
+    "/userLogin": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/userLogin.js"
     ]
   },
   "ampFirstPages": []

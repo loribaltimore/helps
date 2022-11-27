@@ -50,3 +50,5 @@ function LoginForm(props) {
 };
 
 export default LoginForm;
+
+//finish flash message for logged out on client side, because req.logout erases entire session
