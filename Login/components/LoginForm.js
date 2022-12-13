@@ -20,7 +20,7 @@ function LoginForm(props) {
             .then(data => {
                 if (data.bio) {
                     setCurrentUser(data);
-                    Router.push('/');
+                    Router.push('/home');
                 } else {
                     setUsername('');
                     setPass('');

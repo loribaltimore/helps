@@ -2,24 +2,29 @@ import Link from 'next/link';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { useRouter } from 'next/router';
+import { useContext } from 'react';
+import { MainContext } from '../../components/MainContext';
 import CharityLike from './CharityLike';
 
 function CharityCard(props) {
+    let { currentUser } = useContext(MainContext);
     let router = useRouter();
-    let { org, setCurrentOrg } = props;
+    let { org, setCurrentOrg, currentCause } = props;
     let { coverImageUrl } = org;
     let orgNameUrl = org.name.split(' ').join('').toLowerCase();
+    let allOrgs = currentUser.charities.liked.orgs.map(x => x.name);
     let handleClick = () => {
-        router.push(org.profileUrl)
+        // router.push(org.profileUrl);
+
     };
 
     return (
-        <div onClick={() => handleClick()} style={{ height: '15rem', marginBottom: '1%', border: '1px solid black', cursor: 'pointer' }}>
+        <div  style={{ height: '15rem', marginBottom: '1%', border: '1px solid black', cursor: 'pointer', backgroundColor: 'white' }}>
             <Grid container>
                 <Grid item xs={11}>
                 <Container style={{width: '90%'}}>
                 <Grid container>
-                    <Grid item xs={6}>
+                    <Grid item xs={6} onClick={() => handleClick()}>
                         <h3>{org.name}</h3>
                             <img src={coverImageUrl} style={{ height: '10rem', width: '20rem' }} />
                     </Grid>
@@ -37,9 +42,15 @@ function CharityCard(props) {
                 </Grid>
             </Container>
                 </Grid>
-                <Grid item xs={1}>
-                <CharityLike />
-                </Grid>
+                {
+                    allOrgs.indexOf(org.name) === -1 ?
+                    <Grid item xs={1}>
+                            <CharityLike org={org} currentCause={currentCause}/>
+                    </Grid>
+                        :
+                    ''  
+                }
+                
             </Grid>
             
         </div>
@@ -53,3 +64,7 @@ export default CharityCard;
 ///create 'like' button => add to Spread
 //spread could be like a donation playlist
 ///set amount spread => amount to each => total => tier
+
+
+// program and style btn
+// change oeg fetch

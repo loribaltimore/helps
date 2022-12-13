@@ -9,7 +9,7 @@ export function SignUpProvider(props) {
     let [shipping, setShipping] = useState(undefined);
     let [billing, setBilling] = useState(undefined);
     let [contact, setContact] = useState(undefined);
-    let[auth, setAuth] = useState(undefined);
+    let [auth, setAuth] = useState(undefined);
 
     return (
         <div>

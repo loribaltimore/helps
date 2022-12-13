@@ -31,7 +31,7 @@ export default function UserMenu() {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-      <AccountCircleOutlinedIcon style={{fontSize: '2rem'}}/>
+      <AccountCircleOutlinedIcon style={{fontSize: '2rem', color: '#ff5757'}}/>
       </Button>
       <Menu
         id="basic-menu"

@@ -5,8 +5,7 @@ import Grid from '@mui/material/Grid';
 import Item from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import allStates from '../util/allStates';
-
+import axios from 'axios';
 
 function UserInformation(props) {
     let { setRenderBio, setRenderAddress } = props;
@@ -14,12 +13,26 @@ function UserInformation(props) {
     let [firstName, setFirstName] = useState('');
     let [lastName, setLastName] = useState('');
     let [age, setAge] = useState('');
+    let [test, setTest] = useState('');
 
     let handleClick = () => {
         setBio({ firstName, lastName, age });
         setRenderBio(false);
         setRenderAddress(true);
     };
+
+    let doClick = async () => {
+        let response = await axios({
+            method: 'post',
+            url: "http://localhost:3000/signup",
+            data: {
+                firstName: 'balls'
+            },
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then(data => console.log(data)).catch(err => console.log(err));
+    }
 
     return (
         <div >
@@ -74,7 +87,12 @@ function UserInformation(props) {
                 }
                 
             </Container>
-            
+            <form method='post' url="http://localhost:3000/signup">
+                <input name="test" value={test} onChange={(event) => setTest(event.target.value)}/>
+                <button type="submit">Submit</button>
+            </form>
+            <button type="submit" onClick={() => doClick()}>Submit</button>
+
         </div>
     )
 

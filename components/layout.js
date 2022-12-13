@@ -6,18 +6,17 @@ import { useRouter } from 'next/router';
 
 function Layout(props) {
     let router = useRouter();
-    let { route } = router;
-
+    let { asPath } = router;
     return (
-        <div>
-            {
-                noBackBtn.indexOf(route) < 0 ?
+        <div >
+            {/* {
+                noBackBtn.indexOf(asPath) === -1 ?
                     <BackBtn /> : ''
-            }
+            } */}
             <Grid container >
             <Grid item xs={2.25}></Grid>
-                <Grid item xs={7.5}>
-                <Item>{props.children}</Item>
+                <Grid item xs={7.5} style={{backgroundImage: `url(${'/img/logo.jpeg'})`, ackgroundImage: `url(${'/img/logo.jpeg'})`, backgroundSize: '10%', backgroundAttachment: 'fixed', backgroundPosition: 'center', height: '100%'}}>    
+                <Item style={{paddingTop: '10%'}}>{props.children}</Item>
             </Grid>
             <Grid item xs={2.25}></Grid>
             </Grid>   

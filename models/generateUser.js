@@ -1,4 +1,4 @@
-let generateUser =  function (bio, shipping, billing, contact, auth, interests) {
+let generateUser =  function (bio, shipping, billing, contact, auth) {
    let newUser = {
       username: auth.username,
       bio: bio,
@@ -18,9 +18,6 @@ let generateUser =  function (bio, shipping, billing, contact, auth, interests) 
          }
       },
       contact: contact,
-      charities: {
-         interests: interests
-      }
    };
    return newUser;
 };

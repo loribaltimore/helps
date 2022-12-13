@@ -96,8 +96,20 @@ let userSchema = new Schema({
     },
     charities: {
         interests: {
-            type: Array,
-            default: []
+            type: Map,
+            of: Object,
+            default: new Map()
+        },
+        liked: {
+            orgs: {
+                type: Array,
+                default: []
+            },
+            tags: {
+                type: Map,
+                of: Number,
+                default: new Map()
+            }
         }
     }
 });
@@ -105,7 +117,6 @@ let userSchema = new Schema({
 //Connect User with Passport for Authentication
 userSchema.plugin(PassportLocalMongoose);
 
-let User = model('user', userSchema);
 
 //User Virtuals -----------
 userSchema.virtual('shipping').get(function () {
@@ -121,6 +132,28 @@ userSchema.virtual('billing').get(function () {
 userSchema.virtual('name').get(function () {
     return this.bio.firstName + ' ' + this.bio.lastName;
 }, this);
+userSchema.virtual('sortedTags').get(function () {
+    let allTags = [];
+    
+        this.charities.liked.tags.forEach(function (value, key) {
+            allTags.push([key, value]);
+        });
+        allTags.sort(function (a, b) {
+            return b[1] - a[1]
+        });
+        return allTags;
+   
+});
+userSchema.virtual('sortedInterests').get(function () {
+    let interestsArr = [];
+    this.charities.interests.forEach(function (value, key) {
+        interestsArr.push([key, value]);
+    });
+
+    return interestsArr.sort(function (a, b) {
+        return b[1].score - a[1].score;
+    });
+})
 
 //User Methods ------------------
 userSchema.method('addDonation').get(async (val) => {
@@ -182,11 +215,37 @@ userSchema.method('changeBilling').get(async (arr = [], sameAsShipping) => {
     await this.save();
 }, this);
 
+userSchema.method('likeCharity', async (id, org, cause) => {
+    let currentUser = await User.findById(id);
+    currentUser.charities.liked.orgs.push(org);
+    let allTags = {};
+    org.tags.forEach(function (element, index) {
+        allTags[element] = 1;
+    });
+    if (currentUser.charities.interests.get(cause) === undefined) {
+        currentUser.charities.interests.set(cause, { score: 1, tags: allTags })
+        console.log('is new cause');
+        return currentUser.charities.interests;
+    } else {
+        let updatedScore = currentUser.charities.interests.get(cause).score += 1;
+        let updatedTags = currentUser.charities.interests.get(cause).tags;
+        Object.keys(allTags).forEach(function (element, index) {
+            updatedTags[element] = updatedTags[element] + 1 || 1;
+        });
+        currentUser.charities.interests.set(cause, {score: updatedScore, tags: updatedTags})
+        return currentUser.charities.interests;
+    };
+
+});
+
+let User = model('user', userSchema);
+
+
 module.exports = User;
 
 
 
-
+///finish configuring interests scores and tags  .
 
 
 

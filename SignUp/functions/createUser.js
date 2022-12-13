@@ -1,16 +1,32 @@
 let axios = require('axios');
 
 let createUser = async (bio, shipping, billing, contact, auth, interests) => {
-    let response = await axios.post(
-        'http://localhost:3000/signup',
-        {
-            bio: bio,
-            shipping: shipping,
-            billing: billing,
-            contact: contact,
-            auth: auth,
-            interests: interests
-        }).then(data => { console.log(data); return data }).catch(err => console.log(err));
+    let { firstName, lastName, age } = bio;
+    let { streetName, streetNumber, city } = shipping;
+    let billStreetName = billing.streetName;
+    let billStreetNumber = billing.streetNumber;
+    let billCity = billing.city;
+    let { phone, email } = contact;
+    let { username, password } = auth;
+    let response = await axios({
+        method: 'post',
+       url: 'http://localhost:3000/signup',
+        data: {
+            firstName,
+            lastName,
+            age,
+            streetNumber,
+            streetName,
+            city,
+            phone,
+            email,
+            username,
+            password,
+            billStreetName,
+            billStreetNumber,
+            billCity
+        }
+    }).then(data => { console.log(data); return data }).catch(err => console.log(err));
     
     let { data } = response;
     return data;

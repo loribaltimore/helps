@@ -53,13 +53,15 @@ function UserAuth(props) {
                 </Grid>
                 {
                     username && pass ?
-                        <Link href={'/'}>
+                        // <Link href={'/'}>
                             <Button variant="contained" onClick={() => handleClick()}>
                                     Create Profile
                             </Button>
-                        </Link> : ''
+                        //  </Link>
+                        : ''
                 } 
             </Container>
+            
         </div>
     )
 };
