@@ -13,9 +13,6 @@ function Navbar(props) {
     let { currentUser } = useContext( MainContext );
     let Router = useRouter();
     console.log(currentUser);
-
-    
-    
     return (
         <div>
             <nav style={{height: '4rem', backgroundColor: '#5ce1e6', marginBottom: '2%', width: '25%', borderRadius: '5rem', position: 'fixed', left: '37.5%', zIndex: '1', boxShadow: '4px 4px gray'}}>

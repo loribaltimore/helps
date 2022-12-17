@@ -4,12 +4,11 @@ import Alert from '@mui/material/Alert';
 
 function Flash(props) {
     let { flash, setFlash } = useContext(MainContext);
-
     return (
         <div>
             {
-                flash.msg !== undefined ?
-                <Alert severity={flash.type} onClose={() => {setFlash({msg: undefined, type: undefined})}}>{flash.msg}</Alert> : ''
+                flash.render === true && flash.msg !== undefined ?
+                <Alert severity={flash.type} onClose={() => {setFlash({msg: undefined, type: undefined, render: false})}}>{flash.msg}</Alert> : ''
             }
         </div>
     )

@@ -39,7 +39,7 @@ function UserInformation(props) {
             <Container style={{ border: '1px lightgray solid', padding: '3%' }}>
             <h1>Tell us about yourself..</h1>
                 <Grid container>
-                    <Grid xs={3}>
+                    <Grid item xs={3}>
                         <Item>
                         <TextField
                                 style={{ backgroundColor: 'lightgray' }}
@@ -52,7 +52,7 @@ function UserInformation(props) {
                             />
                         </Item>
                     </Grid>
-                    <Grid xs={3}>
+                    <Grid item xs={3}>
                             <Item>
                             <TextField
           style={{backgroundColor: 'lightgray'}}
@@ -65,7 +65,7 @@ function UserInformation(props) {
                             />
                             </Item>
                             </Grid>
-                            <Grid xs={3}>
+                            <Grid item xs={3}>
                             <Item>
                          <TextField
            style={{backgroundColor: 'lightgray', marginBottom: '1%'}}
@@ -87,12 +87,6 @@ function UserInformation(props) {
                 }
                 
             </Container>
-            <form method='post' url="http://localhost:3000/signup">
-                <input name="test" value={test} onChange={(event) => setTest(event.target.value)}/>
-                <button type="submit">Submit</button>
-            </form>
-            <button type="submit" onClick={() => doClick()}>Submit</button>
-
         </div>
     )
 

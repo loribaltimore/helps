@@ -68,7 +68,7 @@ console.log(currentUser);
 console.log('finished!')
 };
 
-seedInterests();
+// seedInterests();
 
 let seedProducts = async () => {
     await Product.deleteMany({});

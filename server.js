@@ -42,6 +42,8 @@ app.prepare().then(() => {
     let LocalStrategy = require('passport-local');
     const { body, check, validationResult } = require('express-validator');
     let mongoSanitize = require('express-mongo-sanitize');
+    let multer = require('multer');
+    let uploader = multer();
 
 
     //Required Middleware
@@ -83,6 +85,8 @@ app.prepare().then(() => {
     let { sessionGet, sessionPost } = require('./controllers/sessionControllers');
     let productsGet = require('./middleware/productsGet');
     let {signupValidators, signupValidatorHandler} = require('./SignUp/middleware/signupValidate');
+    let asyncCatch = require('./util/asyncCatch');
+    let { productsPost } = require('./Master/controllers/productsController');
 
     //Routes
     server.get('/', async (req, res, next) => {
@@ -101,17 +105,18 @@ app.prepare().then(() => {
         app.render(req, res, '/userRecommended', {});
     });
 
+    server.get('/master', (req, res, next) => {
+        app.render(req, res, '/masterPage', {})
+    });
+
+    //CRUD Routes
+    server.post('/products', uploader.single('img'), productsPost);
+
     //API Routes
     server.get('/explore/charities/:cause', charityByCause);
     server.post('/explore/charities/like', likeCharity);
     server.get('/products', productsGet);
     server.get('/charities/recommended', charityRecommended);
-
-    // server.get('/charities/:charityName', async (req, res, next) => {
-    //     await charityByName(req, res, next);
-    //     app.render(req, res, '/charityPage', {});
-    // });
-
     server.get('/session', sessionGet);
     server.post('/session', sessionPost);
 
@@ -123,7 +128,7 @@ app.prepare().then(() => {
     server.get('/logout', logout);
 
     //Signup Routes
-    server.post('/signup', signupValidators, signupValidatorHandler, signupPost);
+    server.post('/signup', signupValidators, asyncCatch(signupValidatorHandler), asyncCatch(signupPost));
    
 
 
@@ -139,7 +144,6 @@ app.prepare().then(() => {
 
 });
 
-//configure recommended; Still have to get relavent data from charity API
 
 //reconfigure MainContext, so useEffect doesn't have to happen 3 times on load
 //Make sure flash is working correctly and currentUser in main context as well
@@ -156,3 +160,9 @@ app.prepare().then(() => {
 //resize images, because width and height are expensive
 ///work out font
 //integrate cloudinary
+
+
+//admin account has permissions to see site information
+//orders placed, total money raised, most popular products, average purchase amount
+//admin account can create new products => multer
+//add new options into navbar for admin ^^^^^^^^^^^^^

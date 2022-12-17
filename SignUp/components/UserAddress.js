@@ -30,24 +30,27 @@ function UserAddress(props) {
         'true': 'Billing Address',
         'false': 'Where Should We Ship Things For You?'
     };
+    console.log(state);
     let handleClick = () => {
+        event.target.click();
         if (renderBilling === true && renderShipping === true) {
             console.log('1')
-            setIsBilling(true);
-            setRenderShipping(false);
-            setShipping({ streetNumber, streetName, city });
+            setShipping({ streetNumber, streetName, city, state });
             setStreetNumber('');
             setStreetName('');
             setCity('');
+            setState('');
+            setIsBilling(true);
+            setRenderShipping(false);
         } else if (renderBilling === true && renderShipping === false) {
             console.log('2')
-            setBilling({ streetNumber, streetName, city });
+            setBilling({ streetNumber, streetName, city, state });
             setRenderAddress(false);
             setRenderContact(true);
         } else {
             console.log('3')
-            setBilling({ streetNumber, streetName, city, sameAsShipping: true });
-            setShipping({ streetNumber, streetName, city });
+            setBilling({ streetNumber, streetName, city, state, sameAsShipping: true });
+            setShipping({ streetNumber, streetName, city, state });
             setRenderAddress(false);
             setRenderContact(true);
         };      
@@ -62,7 +65,7 @@ function UserAddress(props) {
             <Container style={{ border: '1px lightgray solid', padding: '3%' }}>
                         <h1>{header[isBilling]}</h1>   
                 <Grid container>
-                    <Grid xs={3}>
+                    <Grid item xs={3}>
                         <Item>
                         <TextField
             style={{backgroundColor: 'lightgray'}} 
@@ -75,7 +78,7 @@ function UserAddress(props) {
                             />
                         </Item>
                     </Grid>
-                    <Grid xs={3}>
+                    <Grid item xs={3}>
                             <Item>
                             <TextField
           style={{backgroundColor: 'lightgray'}}
@@ -88,7 +91,7 @@ function UserAddress(props) {
                             />
                             </Item>
                             </Grid>
-                            <Grid xs={3}>
+                            <Grid item xs={3}>
                             <Item>
                          <TextField
            style={{backgroundColor: 'lightgray', marginBottom: '1%'}}
@@ -101,21 +104,20 @@ function UserAddress(props) {
         />
                         </Item>
                     </Grid>
-                    <Grid xs={3}>
+                    <Grid item xs={3}>
                         <Item>
                             <StateInput setState={setState} state={state}/>
                         </Item>
                         </Grid>
                     {
                         isBilling === false ?
-                        <Grid xs={3}>
+                        <Grid item xs={3}>
                         <Item>
                         <FormControl>
   <FormLabel id="demo-controlled-radio-buttons-group">Billing Address</FormLabel>
   <RadioGroup
     aria-labelledby="demo-controlled-radio-buttons-group"
     name="controlled-radio-buttons-group"
-    value='{value}'
     onChange={(event) => handleChange(event)}
   >
     <FormControlLabel value={false} control={<Radio />} label="Same As Shipping" />

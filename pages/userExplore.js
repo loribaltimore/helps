@@ -31,7 +31,7 @@ function Explore() {
                 currentOrg === undefined ?
                     orgs === undefined ?
                         allInterests.slice(pageCalc, pageCalc+10).map(function (element, index) {
-                            return <Cause cause={element} setOrgs={setOrgs} setCurrentCause={setCurrentCause} key={index} orgs={orgs} />
+                            return <Cause cause={element} setOrgs={setOrgs} setCurrentCause={setCurrentCause} key={index} orgs={orgs} currentPage={currentPage}/>
                             })                        
                     :
                         orgs.slice(pageCalc, pageCalc+10).map(function (element, index) {

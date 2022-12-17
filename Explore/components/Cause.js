@@ -1,12 +1,14 @@
 import axios from 'axios';
 function Cause(props) {
-    let { cause, setOrgs, orgs, setCurrentCause } = props;
+    let { cause, setOrgs, orgs, setCurrentCause, currentPage } = props;
 
     let handleClick = async () => {
-        console.log('working')
          await axios({
             method: 'get',
              url: `http://localhost:3000/explore/charities/${cause}`,
+             params: {
+                 page: currentPage
+             }
          }).then(data => { console.log(data); setOrgs(data.data.nonprofits); setCurrentCause(cause) }).catch(err => console.log(err));
     }
 

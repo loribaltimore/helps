@@ -1,23 +1,31 @@
-let generateUser =  function (bio, shipping, billing, contact, auth) {
+let generateUser =  function (firstName, lastName, age, streetNumber, streetName, city, state,
+   phone, email, username, billStreetName, billStreetNumber, billCity, billState, billSAS) {
    let newUser = {
-      username: auth.username,
-      bio: bio,
+      username,
+      bio: {
+         firstName,
+         lastName,
+         age: parseInt(age)
+      },
       address: {
          shipping: {
-            num: shipping.streetNumber,
-            street: shipping.streetName,
-            city: shipping.city,
-            state: shipping.state,
+            num: streetNumber,
+            street: streetName,
+            city: city,
+            state: state,
          },
          billing: {
-            num: billing.streetNumber,
-            street: billing.streetName,
-            city: billing.city,
-            state: billing.state,
-            sameAsShipping: billing.sameAsShipping
+            num: billStreetNumber,
+            street: billStreetName,
+            city: billCity,
+            state: billState,
+            sameAsShipping: billSAS
          }
       },
-      contact: contact,
+      contact: {
+         phone,
+         email,
+      }
    };
    return newUser;
 };

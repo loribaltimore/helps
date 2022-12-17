@@ -25,7 +25,7 @@ function UserContact(props) {
             <Container style={{ border: '1px lightgray solid', padding: '3%' }}>
             <h1>How can we get ahold of you?</h1>
                 <Grid container>
-                    <Grid xs={3}>
+                    <Grid item xs={3}>
                         <Item>
                         <TextField
                                 style={{ backgroundColor: 'lightgray' }}
@@ -38,7 +38,7 @@ function UserContact(props) {
                             />
                         </Item>
                     </Grid>
-                    <Grid xs={3}>
+                    <Grid item xs={3}>
                             <Item>
                             <TextField
           style={{backgroundColor: 'lightgray'}}

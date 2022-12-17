@@ -71,6 +71,12 @@ let userSchema = new Schema({
             }
         },
     },
+    admin: {
+        persmissions: {
+            type: Array,
+            default: ['none']
+        }
+    },
     contact: {
         phone: {
             type: String,

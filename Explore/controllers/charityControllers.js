@@ -4,11 +4,12 @@ let User = mongoose.model('user');
 
 module.exports.charityByCause = async (req, res, next) => {
     let { cause } = req.params;
+    let { currentPage } = req.query;
     let response = await axios({
         method: 'get',
         url: `https://partners.every.org/v0.2/browse/${cause}?apiKey=${process.env.CHARITY_API_KEY}`,
         params: {
-            take: '100'
+            take: '100',
         }
     }).then(data => {  return data }).catch(err => console.log(err));
     let { data } = response;
@@ -50,3 +51,5 @@ module.exports.charityRecommended = async (req, res, next) => {
     let interestsByName = topInterests.map(x => x[0]);
     res.send({ allRecs, interestsByName });
 };
+
+

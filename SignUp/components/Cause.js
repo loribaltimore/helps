@@ -24,7 +24,7 @@ function Cause(props) {
     };
     return (
         <div>
-            <div style={{ height: '3rem', width: '15rem', backgroundColor: styleStatus.color, opacity: '50%', cursor: 'pointer',  }}>
+            <div style={{ height: '3rem', width: '15rem', backgroundColor: styleStatus.color, cursor: 'pointer',  }}>
                 <Container maxWidth="sm" style={{textAlign: 'center', position: 'relative', top: '30%'}}>
                     <h4  onClick={(event) => handleClick(event)}>{cause}</h4>
                     </Container>

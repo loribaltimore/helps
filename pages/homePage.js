@@ -3,8 +3,14 @@ import ItemPanel from '../Home/components/ItemPanel';
 import InteractionPanel from '../Home/components/InteractionPanel';
 import Grid from '@mui/material/Grid';
 import { explore, recommended } from '../util/interactions';
+import { MainContext } from '../components/MainContext';
+import { useContext } from 'react';
 
 function Home(props) {
+    let { flash, setFlash } = useContext(MainContext);
+    flash.msg !== undefined ?
+        setFlash({ msg: flash.msg, type: flash.type, render: true }) : ''
+    console.log(flash);
 
     return (
         <div >

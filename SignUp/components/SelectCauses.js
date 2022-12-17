@@ -28,7 +28,7 @@ function SelectCauses(props) {
         <div style={{border: '1px lightgray solid'}}>
             <Container maxWidth="md" style={{padding: '2%'}}>
             <h1 style={{padding: '1%'}}>What are you passionate about ?</h1>
-                <div style={{ backgroundColor: 'darkblue', opacity: '50%', height: '25rem', paddingLeft: '2.5%' }}>
+                <div style={{ height: '25rem', paddingLeft: '2.5%' }}>
                     <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                         {
                             charityCauses.slice(causesToShow[0], causesToShow[1]).map(function (element, index) {
