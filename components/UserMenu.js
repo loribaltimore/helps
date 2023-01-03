@@ -11,8 +11,8 @@ import { MainContext } from '../components/MainContext';
 import { useContext } from 'react';
 
 export default function UserMenu() {
-  let {setFlash} = useContext(MainContext)
-    let Router = useRouter();
+
+    let router = useRouter();
   const [anchorEl, setAnchorEl] = useState();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -42,9 +42,9 @@ export default function UserMenu() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={() => { handleClose(); router.push('/dashboard') }}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={() => { handleClose(); Router.push('/logout') }}>Logout</MenuItem>
+        <MenuItem onClick={() => { handleClose(); router.push('/logout') }}>Logout</MenuItem>
       </Menu>
     </div>
   );

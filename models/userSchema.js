@@ -72,7 +72,7 @@ let userSchema = new Schema({
         },
     },
     admin: {
-        persmissions: {
+        permissions: {
             type: Array,
             default: ['none']
         }
@@ -115,6 +115,20 @@ let userSchema = new Schema({
                 type: Map,
                 of: Number,
                 default: new Map()
+            }
+        },
+        donations: {
+            coin: {
+                type: Number,
+                default: 0
+            },
+            orgs: {
+                type: Array,
+                default: []
+            },
+            total: {
+                type: Number,
+                default: 0
             }
         }
     }
@@ -221,6 +235,18 @@ userSchema.method('changeBilling').get(async (arr = [], sameAsShipping) => {
     await this.save();
 }, this);
 
+userSchema.method('unlikeCharity', async (id, org, cause) => {
+    let currentUser = await User.findById(id);
+    currentUser.charities.liked.orgs = currentUser.charities.liked.orgs.filter(x => x.name !== org);
+    currentUser.charities.interests.get(cause).score -= 1;
+    let currentTags = currentUser.charities.interests.get(cause).tags;
+    Object.keys(currentTags).forEach(function (element, index) {
+        currentTags[element].score -= 1;
+    });
+    await currentUser.save();
+    return currentUser.charities.liked.orgs.map(x => x.name)
+})
+
 userSchema.method('likeCharity', async (id, org, cause) => {
     let currentUser = await User.findById(id);
     currentUser.charities.liked.orgs.push(org);
@@ -248,10 +274,6 @@ let User = model('user', userSchema);
 
 
 module.exports = User;
-
-
-
-///finish configuring interests scores and tags  .
 
 
 

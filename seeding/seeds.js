@@ -5,7 +5,6 @@ mongoose.connect('mongodb://localhost:27017/helps')
     .then(console.log('Database is Live')).catch(err => console.log(err));
 
 let seedUser = async () => {
-    await User.deleteMany({});
     let newUser = await new User({
         username: 'dev',
         bio: {
@@ -68,7 +67,7 @@ console.log(currentUser);
 console.log('finished!')
 };
 
-// seedInterests();
+seedInterests();
 
 let seedProducts = async () => {
     await Product.deleteMany({});
@@ -105,3 +104,44 @@ let seedTags = async () => {
 };
 
 // seedTags();
+
+let allProducts = async () => {
+    // await Product.deleteMany({});
+    let allProducts = await Product.find({});
+    await Product.deleteOne({ name: 'sdf' });
+};
+// allProducts();
+
+let seedDonations = async () => {
+    let currentUser = await User.findOne({ username: 'dev' });
+    currentUser.charities.liked.orgs = [];
+
+    // console.log(currentUser.charities.liked.orgs.slice(0, 5))
+    // currentUser.charities.liked.orgs = currentUser.charities.liked.orgs.slice(0, 3);
+    await currentUser.save();
+    // currentUser.charities.liked.orgs = currentUser.charities.liked.orgs.map(function (element, index) {
+    //     if (element === undefined || element === null) {
+    //         return {sort: 1}
+    //     } else {
+    //         console.log(element)
+    //         element.sort = 0;
+    //         return element;
+    //     }
+        
+    // });
+    // console.log(currentUser.charities.liked.orgs);
+
+};
+
+// seedDonations();
+
+let seedPermissions = async () => {
+    let currentUser = await User.findOne({ username: 'dev' });
+    currentUser.admin.permissions.push('admin');
+    await currentUser.save();
+console.log('Permissions Seeded!')
+};
+
+// seedPermissions();
+
+

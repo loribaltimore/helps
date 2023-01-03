@@ -16,7 +16,7 @@ function Layout(props) {
             <Grid container >
             <Grid item xs={2.25}></Grid>
                 <Grid item xs={7.5} style={{backgroundImage: `url(${'/img/logo.jpeg'})`, ackgroundImage: `url(${'/img/logo.jpeg'})`, backgroundSize: '10%', backgroundAttachment: 'fixed', backgroundPosition: 'center', height: '100%'}}>    
-                <Item style={{paddingTop: '10%'}}>{props.children}</Item>
+                <Item style={{paddingTop: '5%'}}>{props.children}</Item>
             </Grid>
             <Grid item xs={2.25}></Grid>
             </Grid>   

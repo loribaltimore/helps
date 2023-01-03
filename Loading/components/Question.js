@@ -3,7 +3,7 @@ import Divider from '@mui/material/Divider';
 import Answer from './Answer';
 
 function Question(props) {
-    let { currentQuestion } = props;
+    let { currentQuestion, setIsLoaded } = props;
     let [isCorrect, setIsCorrect] = useState(false);
     let [answer, setAnswer] = useState(undefined);
     let [isClicked, setIsClicked] = useState(false);
@@ -26,12 +26,12 @@ function Question(props) {
             {
                 currentQuestion !== undefined ?
                     currentQuestion.incorrectAnswers.map(function (element, index) {
-                        return <Answer answer={element} setAnswer={setAnswer} incorrect={true} setIsClicked={setIsClicked} isClicked={isClicked}/>
+                        return <Answer key={index} answer={element} setAnswer={setAnswer} incorrect={true} setIsClicked={setIsClicked} isClicked={isClicked} setIsLoaded={setIsLoaded}/>
                    }) : ''
             }
             {
                 currentQuestion !== undefined ?
-                        <Answer answer={currentQuestion.correctAnswer} setAnswer={setAnswer} incorrect={false} setIsClicked={setIsClicked} isClicked={isClicked} setIsCorrect={setIsCorrect}/> : ''
+                        <Answer answer={currentQuestion.correctAnswer} setAnswer={setAnswer} incorrect={false} setIsClicked={setIsClicked} isClicked={isClicked} setIsCorrect={setIsCorrect} setIsLoaded={setIsLoaded}/> : ''
             }
             </div>
             

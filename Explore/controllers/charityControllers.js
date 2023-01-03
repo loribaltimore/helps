@@ -19,11 +19,15 @@ module.exports.charityByCause = async (req, res, next) => {
 module.exports.likeCharity = async (req, res, next) => {
     console.log('into like charity');
     let { org, id, cause } = req.body;
+    console.log(org, id, cause);
+    org.sort = 0;
     let currentUser = await User.findById(id);
    let updatedInterests = await currentUser.likeCharity(currentUser._id, org, cause).then(data => { return data }).catch(err => console.log(err));
     currentUser.charities.interests = updatedInterests;
-    console.log(currentUser.charities.interests);
+    currentUser.charities.liked.orgs.push(org);
     await currentUser.save();
+    let allLiked = currentUser.charities.liked.orgs.map(x => x.name);
+   return res.send({allLiked})
 };
 
 module.exports.charityByTag = async (req, res, next) => {
@@ -52,4 +56,15 @@ module.exports.charityRecommended = async (req, res, next) => {
     res.send({ allRecs, interestsByName });
 };
 
+
+module.exports.unlikeCharity = async (req, res, next) => {
+    let { org, cause } = req.body;
+    let currentUser = await User.findById(req.user._id);
+    console.log(currentUser.charities.liked.orgs.length)
+    let updatedLiked = await currentUser.unlikeCharity(req.user._id, org, cause)
+        .then(data => { return data }).catch(err => console.log(err));
+    console.log(updatedLiked.length)
+    let allLiked = updatedLiked;
+    return res.send({ allLiked });
+};
 

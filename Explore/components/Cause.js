@@ -1,6 +1,10 @@
+import { ExploreContext } from './ExploreContext';
+import { useContext } from 'react';
+
 import axios from 'axios';
 function Cause(props) {
-    let { cause, setOrgs, orgs, setCurrentCause, currentPage } = props;
+    let { cause } = props;
+    let { setOrgs, setCurrentCause, currentPage } = useContext(ExploreContext);
 
     let handleClick = async () => {
          await axios({
@@ -9,13 +13,15 @@ function Cause(props) {
              params: {
                  page: currentPage
              }
-         }).then(data => { console.log(data); setOrgs(data.data.nonprofits); setCurrentCause(cause) }).catch(err => console.log(err));
+         }).then(data => { setOrgs(data.data.nonprofits); setCurrentCause(cause) }).catch(err => console.log(err));
     }
 
     return (
-        <div style={{ border: '1px solid black', backgroundColor: 'lightblue', cursor: 'pointer' }}
+        <div style={{ border: '1px solid black', backgroundColor: 'white', cursor: 'pointer', textAlign: 'center' }}
             onClick={() => handleClick()}>
-            <h2>{cause}</h2>
+            <h2>
+                {cause}
+            </h2>
         </div>
     )
 };

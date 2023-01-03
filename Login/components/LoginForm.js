@@ -11,15 +11,14 @@ import { MainContext } from '../../components/MainContext';
 
 function LoginForm(props) {
     let Router = useRouter();
-    let { currentUser, setFlash, setCurrentUser } = useContext(MainContext);
+    let { currentUser, setFlash } = useContext(MainContext);
     let [username, setUsername] = useState('');
     let [pass, setPass] = useState('');
 
     let handleClick = async () => {
          await checkCredentials(username, pass)
-            .then(data => {
+             .then(data => {
                 if (data.bio) {
-                    setCurrentUser(data);
                     setFlash({ msg: 'Successfully Logged In', type: 'success', render: false });
                     Router.push('/home');
                 } else {

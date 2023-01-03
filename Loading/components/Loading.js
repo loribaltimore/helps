@@ -7,6 +7,7 @@ import fetchTrivia from '../functions/fetchTrivia';
 
 function Loading(props) {
     let [currentQuestion, setCurrentQuestion] = useState(undefined);
+    let { setIsLoaded } = props;
 
     let loading = '...Loading'; 
     let colors = ['#5AD238', '#37A6D2', '#B037D2', '#D26337', '#7678ed',
@@ -36,7 +37,7 @@ function Loading(props) {
             </h1>
             <div style={{paddingLeft: '20%', paddingRight: '20%'}}>
 
-                        <Question currentQuestion={currentQuestion}/>
+                <Question currentQuestion={currentQuestion} setIsLoaded={setIsLoaded}/>
                     
               
             </div>

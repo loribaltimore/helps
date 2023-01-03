@@ -1,7 +1,8 @@
 
 
 module.exports.loginPost = async (req, res, next) => {
-    res.send(req.user);
+    console.log('login post')
+    return res.send(req.user);
 };
 
 module.exports.logout = async (req, res, next) => {

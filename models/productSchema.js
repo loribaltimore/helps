@@ -22,21 +22,38 @@ let productSchema = new Schema({
     sold: {
         type: Number,
         default: 0
+    },
+    img: [
+        {
+            filename: {
+                type: String
+            },
+            path: {
+                type: String
+            }
+        }
+    ],
+    raised: {
+        type: Number,
+        default: 0
     }
 });
 
+
+// productSchema.virtual('raised').get(function () {
+//     return (this.cost * this.sold) / 2
+// });
+
+// productSchema.static('popularity', async (name) => {
+//     let allProducts = await Product.find({});
+//     let sorted = allProducts.sort(function (a, b) {
+//         return a.sold - b.sold;
+//     }).filter(x => x.name);
+//     return sorted.indexOf(name) + 1;
+// });
+
+
 let Product = model('product', productSchema);
 
-productSchema.virtual('raised').get(function () {
-    return (this.cost * this.sold) / 2
-});
-
-productSchema.virtual('popularity').get(async () => {
-    let allProducts = await Product.find({});
-    let sorted = allProducts.sort(function (a, b) {
-        return a.sold - b.sold;
-    }).filter(x => x.name);
-    return sorted.indexOf(this.name) + 1;
-})
 
 module.exports = Product;

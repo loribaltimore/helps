@@ -1,7 +1,7 @@
 let axios = require('axios');
 
 let likeCharity = async (id, org, cause) => {
-     await axios({
+    let response = await axios({
         method: 'post',
         url: 'http://localhost:3000/explore/charities/like',
          data: {
@@ -9,8 +9,9 @@ let likeCharity = async (id, org, cause) => {
              org,
             cause
         }
-    }).then(data => { console.log(data); return data }).catch(err => console.log(err));
-
+    }).then(data => { console.log(data);  return data }).catch(err => console.log(err));
+    let { data } = response;
+    return data;
 };
 
 module.exports = likeCharity;

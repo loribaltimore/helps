@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 
 function Answer(props) {
-    let { answer, setAnswer, incorrect, isClicked, setIsClicked, setIsCorrect } = props;
+    let { answer, setAnswer, incorrect, isClicked, setIsClicked, setIsCorrect, setIsLoaded } = props;
     let [hasShadow, setHasShadow] = useState(true);
     let styles = {
         radius: {
@@ -37,6 +37,9 @@ function Answer(props) {
             setIsClicked(true);
             setAnswer(event.target.innerText);
         }, 500);
+        setTimeout(() => {
+            setIsLoaded(true);
+        }, 3500)
     }
 
     return (

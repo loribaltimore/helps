@@ -16,16 +16,18 @@ const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
+    
+    //Database Connection
+    let mongoose = require('mongoose');
+    mongoose.connect('mongodb://localhost:27017/helps')
+        .then(console.log('Database is Live')).catch(err => console.log(err));
+    
     //Express Connection
     let express = require('express');
     let server = express();
     server.listen(3000, () => {
         console.log('Server is Live');
     });
-    //Database Connection
-    let mongoose = require('mongoose');
-    mongoose.connect('mongodb://127.0.0.1:27017/helps')
-        .then(console.log('Database is Live')).catch(err => console.log(err));
     
     //Required Documents and Resources
     let User = require('./models/userSchema');
@@ -43,7 +45,8 @@ app.prepare().then(() => {
     const { body, check, validationResult } = require('express-validator');
     let mongoSanitize = require('express-mongo-sanitize');
     let multer = require('multer');
-    let uploader = multer();
+    let storage = require('./cloudinaryConfig');
+    let uploader = multer({storage});
 
 
     //Required Middleware
@@ -77,16 +80,15 @@ app.prepare().then(() => {
     let errHandler = require('./middleware/errorHandling');
     let { getLanding } = require('./controllers/landing');
     let { charityByCause, likeCharity,
-        charityByTag, charityRecommended } = require('./Explore/controllers/charityControllers');
+        charityByTag, charityRecommended, unlikeCharity } = require('./Explore/controllers/charityControllers');
     let charityByName = require('./Explore/functions/charityByName');
     let { signupPost } = require('./SignUp/controllers/signupController');
     let { loginPost, logout } = require('./Login/controllers/loginControllers');
     let getSession = require('./functions/getSession');
     let { sessionGet, sessionPost } = require('./controllers/sessionControllers');
-    let productsGet = require('./middleware/productsGet');
     let {signupValidators, signupValidatorHandler} = require('./SignUp/middleware/signupValidate');
     let asyncCatch = require('./util/asyncCatch');
-    let { productsPost } = require('./Master/controllers/productsController');
+    let { productsPost, productsGet, productsDelete, productPut } = require('./Master/controllers/productsController');
 
     //Routes
     server.get('/', async (req, res, next) => {
@@ -102,24 +104,50 @@ app.prepare().then(() => {
     });
 
     server.get('/recommended', async (req, res, next) => {
-        app.render(req, res, '/userRecommended', {});
+    let currentUser = await User.findById(req.user._id);
+        let topInterests = currentUser.sortedInterests.slice(0, 3);
+    let allRecs = [];
+    let apiKey = process.env.CHARITY_API_KEY;
+    for (let i = 0; i < topInterests.length; i++){
+        let tags = Object.keys(topInterests[i][1].tags).slice(0, 3).join(',');
+        console.log(tags);
+        let response = await axios({
+            method: 'get',
+            url: `https://partners.every.org/v0.2/search/${topInterests[i][0]}?apiKey=${apiKey}&take=10&causes=${tags}`
+       }).then(data => { return data.data.nonprofits }).catch(err => console.log(err));
+        allRecs.push(...response);
+    };
+        let interestsByName = topInterests.map(x => x[0]);
+       return app.render(req, res, '/userRecommended', {allRecs, interestsByName});
     });
 
     server.get('/master', (req, res, next) => {
         app.render(req, res, '/masterPage', {})
     });
 
+    server.get('/dashboard', async (req, res, next) => {
+        app.render(req, res, '/userDashboard', {})
+    });
+
     //CRUD Routes
-    server.post('/products', uploader.single('img'), productsPost);
+    server.post('/products', uploader.array('img'), asyncCatch(productsPost));
+    server.put('/products', uploader.array('img'), asyncCatch(productPut));
+    server.delete('/products', asyncCatch(productsDelete));
+    server.post('/explore/charities/like', likeCharity);
+    server.put('/explore/charities/like', unlikeCharity)
 
     //API Routes
     server.get('/explore/charities/:cause', charityByCause);
-    server.post('/explore/charities/like', likeCharity);
+   
     server.get('/products', productsGet);
     server.get('/charities/recommended', charityRecommended);
     server.get('/session', sessionGet);
     server.post('/session', sessionPost);
-
+    server.get('/tester', async (req, res, next) => {
+        let currentUser = await User.findOne({ username: 'dev' })
+            .then(data => { return data }).catch(err => console.log(err));
+        return res.send({currentUser});
+    });
     //login Routes
     server.get('/login', async (req, res, next) => {
         app.render(req, res, '/userLogin', {});
@@ -144,9 +172,17 @@ app.prepare().then(() => {
 
 });
 
+//start working with stripe!!!!
 
-//reconfigure MainContext, so useEffect doesn't have to happen 3 times on load
-//Make sure flash is working correctly and currentUser in main context as well
+//checkout walk through to select which charity to give coin to.
+//what they've purchased, total donated, list of orgs, total donated to each
+//membership level => goals => etc.
+
+
+
+//make contexts for the pages that need it (several props handing down);
+//Why can't I create a separate function from the handleChange function in product
+///form. That way I didn't have a to make productPut.
 //create checkout screen
 //make each cause request a request for only the amount you need to make it faster
 //set up charity page with larger explanation of charity => allow add/heart/spread

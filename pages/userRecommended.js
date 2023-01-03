@@ -1,36 +1,28 @@
 import axios from 'axios';
+import Grid from '@mui/material/Grid';
 import CharityCard from '../Explore/components/CharityCard';
 import CharityPage from '../Explore/components/CharityPage';
+import Navbar from '../components/Navbar';
 import { useEffect, useState } from 'react';
 import Pagination from '@mui/material/Pagination';
-import { MainContext } from '../components/MainContext';
+import { ExploreContext } from '../Explore/components/ExploreContext';
 import { useContext } from 'react';
 import Loading from '../Loading/components/Loading';
 
-function userRecommended(props) {
-    let { currentUser } = useContext(MainContext);
-    let [topInterests, setTopInterests] = useState(undefined);
-    let [orgs, setOrgs] = useState(undefined);
+function userRecommended({user, allRecs, interestsByName}) {
+    let {setCurrentCause, allLiked, setAllLiked} = useContext(ExploreContext);
+    let [currentUser, setCurrentUser] = useState(undefined);
     let [currentPage, setCurrentPage] = useState(1);
+    let [isLoaded, setIsLoaded] = useState(false);
+    useEffect(() => {
+        if (user !== undefined && currentUser === undefined) {
+            setCurrentUser(user);
+            setCurrentCause(interestsByName[currentPage - 1]);
+            setAllLiked(user.charities.liked.orgs.map(x => x.name));
+        };
+    }, [currentUser]);
     
     let pageCalc = (currentPage -1) * 10;
-     ;
-
-    useEffect(() => {
-        let fn = async () => {
-            let response = await axios({
-                method: 'get',
-                url: 'http://localhost:3000/charities/recommended',
-            }).then(data => {
-                setTimeout(() => {
-                    setOrgs(data.data.allRecs); setTopInterests(data.data.interestsByName)
-                }, 3500)
-                
-            })
-                .catch(err => console.log(err));
-        };
-        fn() 
-    }, [currentUser]);
     
 
     let handleChange = (event) => {
@@ -39,33 +31,59 @@ function userRecommended(props) {
     };
 
     return (
-        <div >
+        <div>
+            <Navbar currentUser={user}/>
+        <Grid container>
             {
-                topInterests !== undefined ?
-                <div>
-                    <h2>{topInterests[currentPage-1]}</h2>
-                    </div>
-                    : <Loading />
+                isLoaded === true ?
+                    <Grid item xs={12} >
+                    <h2>{interestsByName[currentPage-1]}</h2>
+                    </Grid>
+                    : <Loading setIsLoaded={setIsLoaded}/>
+            }
+             
+            {
+                isLoaded === true?
+                    allRecs.slice(pageCalc, pageCalc + 10).map(function (element, index) {
+                        let liked = false;
+                        if (allLiked.indexOf(element.name) > -1) {
+                            liked = true;
+                        };
+                                    if (index % 2 === 0) {
+                                       return <Grid item xs={6} style={{ marginBottom: '5rem' }} key={index}>
+                                           <CharityCard org={element} cardType={'like'} liked={liked}/>
+                                            </Grid>
+                                    } else {
+                                        return  <Grid item xs={6} style={{ position: 'relative', top: '15rem' }} key={index}>
+                                            <CharityCard org={element} cardType={'like'} liked={liked}/>
+                                            </Grid>
+                                             }
+                                
+                                })       
+                   
+                 : ''
             }
             
             {
-                orgs !== undefined ?
-                    orgs.slice(pageCalc, pageCalc+10).map(function (element, index) {
-                        return <CharityCard org={element} key={index}/>
-                        })
-                        : ''
-                        
-            }
-            {
-                orgs !== undefined ?
+                isLoaded === true ?
                 <Pagination count={3} color="primary" onChange={(event) => handleChange(event)} />
                     : ''
             }
-        </div>
+            </Grid>
+            </div>
     )
 };
+
+userRecommended.getInitialProps = async (ctxt) => {
+    return {
+        user: ctxt.req.user,
+        allRecs: ctxt.query.allRecs,
+        interestsByName: ctxt.query.interestsByName,
+    }
+};
+
 
 export default userRecommended;
 
 
-///make sure the causes are being labeled correctly so you can have a header on each page of recs;
+//correct the layout to display correctly;
