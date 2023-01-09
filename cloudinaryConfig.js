@@ -11,7 +11,8 @@ let storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'helps',
-    }
+        }
 });
 
 module.exports = storage;
+

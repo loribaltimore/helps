@@ -8,8 +8,8 @@ export function ExploreProvider(props) {
     let [orgs, setOrgs] = useState(undefined);
     let [currentCause, setCurrentCause] = useState(undefined);
     let [currentPage, setCurrentPage] = useState(1);
-    console.log('EXPLORE RERENDER');
-    console.log(allLiked.length);
+    console.log('Explore Context');
+    console.log(currentUser);
 
     return (
         <ExploreContext.Provider value={{allLiked, setAllLiked,

@@ -10,6 +10,7 @@ import { useContext} from 'react';
 
 
 function Explore({ user }) {
+    console.log(user);
     let { setCurrentUser, setAllLiked, setCurrentPage, currentPage, allLiked, orgs, currentUser } = useContext(ExploreContext);
     let allInterests = [];
     let pageCalc = (currentPage - 1) * 10;
@@ -17,11 +18,12 @@ function Explore({ user }) {
         allInterests = Object.keys(currentUser.charities.interests);
     };
     useEffect(() => {
-        if (user !== undefined && currentUser === undefined ) {
+        if (user !== undefined && currentUser === undefined) {
+            console.log('its undefined');
             setCurrentUser(user);
             setAllLiked(user.charities.liked.orgs.map(x => x.name));
         }
-    }, [currentUser]);
+    }, []);
 
     let handleChange = (event) => {
         setCurrentPage(event.target.innerText);

@@ -19,7 +19,7 @@ app.prepare().then(() => {
     
     //Database Connection
     let mongoose = require('mongoose');
-    mongoose.connect('mongodb://localhost:27017/helps')
+    mongoose.connect('mongodb://127.0.0.1:27017/helps')
         .then(console.log('Database is Live')).catch(err => console.log(err));
     
     //Express Connection
@@ -32,6 +32,7 @@ app.prepare().then(() => {
     //Required Documents and Resources
     let User = require('./models/userSchema');
     let Product = require('./models/productSchema');
+    let Donation = require('./models/donationSchema');
     
     //Required Packages
     let bodyParser = require('body-parser');
@@ -45,7 +46,8 @@ app.prepare().then(() => {
     const { body, check, validationResult } = require('express-validator');
     let mongoSanitize = require('express-mongo-sanitize');
     let multer = require('multer');
-    let storage = require('./cloudinaryConfig');
+    // let storage = require('./cloudinaryConfig');
+    let storage = multer.memoryStorage();
     let uploader = multer({storage});
 
 
@@ -89,6 +91,7 @@ app.prepare().then(() => {
     let {signupValidators, signupValidatorHandler} = require('./SignUp/middleware/signupValidate');
     let asyncCatch = require('./util/asyncCatch');
     let { productsPost, productsGet, productsDelete, productPut } = require('./Master/controllers/productsController');
+    let { checkoutPost } = require('./Cart/controllers/cartControllers');
 
     //Routes
     server.get('/', async (req, res, next) => {
@@ -129,6 +132,10 @@ app.prepare().then(() => {
         app.render(req, res, '/userDashboard', {})
     });
 
+    server.get('/checkout', async (req, res, next) => {
+        return app.render(req, res, '/checkoutPage', {})
+    });
+
     //CRUD Routes
     server.post('/products', uploader.array('img'), asyncCatch(productsPost));
     server.put('/products', uploader.array('img'), asyncCatch(productPut));
@@ -138,7 +145,6 @@ app.prepare().then(() => {
 
     //API Routes
     server.get('/explore/charities/:cause', charityByCause);
-   
     server.get('/products', productsGet);
     server.get('/charities/recommended', charityRecommended);
     server.get('/session', sessionGet);
@@ -148,6 +154,8 @@ app.prepare().then(() => {
             .then(data => { return data }).catch(err => console.log(err));
         return res.send({currentUser});
     });
+    server.post('/checkout', checkoutPost);
+
     //login Routes
     server.get('/login', async (req, res, next) => {
         app.render(req, res, '/userLogin', {});
@@ -174,6 +182,7 @@ app.prepare().then(() => {
 
 //start working with stripe!!!!
 
+// cloudinary.destroy on deleting products - delete img from cloudinary
 //checkout walk through to select which charity to give coin to.
 //what they've purchased, total donated, list of orgs, total donated to each
 //membership level => goals => etc.

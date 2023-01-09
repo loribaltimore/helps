@@ -1,24 +1,27 @@
 import Grid from '@mui/material/Grid';
 import CharityCard from '../Explore/components/CharityCard';
 import axios from 'axios';
+import { fabClasses } from '@mui/material';
 
 function test({data}) {
     let { currentUser } = data;
+    console.log("working")
+
     return (
         <Grid container>
             {
-                currentUser !== undefined ?
-                    currentUser.charities.donations.orgs.map(function (element, index) {
+                
+                    currentUser.charities.liked.orgs.map(function (element, index) {
                         if (index % 2 === 0) {
                             return <Grid item xs={6} style={{ marginBottom: '5rem' }} key={index}>
-                                <CharityCard org={element} cardType={'donate'}/>
+                                <CharityCard org={element} cardType={'donate'} liked={false}/>
                                 </Grid>
                         } else {
                             return <Grid item xs={6} style={{ position: 'relative', top: '15rem' }} key={index}>
-                                <CharityCard org={element} cardType={'donate'}/>
+                                <CharityCard org={element} cardType={'donate'} liked={false}/>
                           </Grid> 
                         }
-                }): ''
+                })
             }
         </Grid>
     )

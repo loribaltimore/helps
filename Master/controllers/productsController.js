@@ -1,21 +1,19 @@
 let Product = require('../../models/productSchema');
+let extractor = require('../functions/extractor');
 
 module.exports.productsPost = async (req, res, next) => {
-    let { name, price, cost, lead, img } = req.body;
-    let imgFiles = req.files.map(function (element, index) {
-        return { filename: element.filename, path: element.path }
-    });
-
+    let { name, price, cost, lead, img , code} = req.body;
     let newProduct = await new Product({
         name,
         price,
         cost,
-        lead, 
+        lead,
+        code
     });
 
-    newProduct.img.push(
-        ...imgFiles
-    );
+    await extractor(req.files[0])
+        .then(data => { console.log(data); newProduct.img.push(data)}).catch(err => console.log(err))
+    
 
     await newProduct.save();
 

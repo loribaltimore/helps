@@ -11,6 +11,10 @@ let productSchema = new Schema({
         type: Number,
         required: true
     },
+    code: {
+        type: String,
+        required: true
+    },
     cost: {
         type: Number,
         required: true

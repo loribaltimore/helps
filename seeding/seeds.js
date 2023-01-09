@@ -1,40 +1,45 @@
 let mongoose = require('mongoose');
 const User = require('../models/userSchema');
 let Product = require('../models/productSchema');
+let DonationQueue = require('../models/donationQueueSchema');
+let Donation = require('../models/donationSchema');
+
 mongoose.connect('mongodb://localhost:27017/helps')
     .then(console.log('Database is Live')).catch(err => console.log(err));
 
 let seedUser = async () => {
-    let newUser = await new User({
-        username: 'dev',
-        bio: {
-            firstName: 'Dakota',
-            lastName: 'Boing',
-            age: 29
-        },
-        address: {
-            shipping: {
-                number: '1',
-                street: '1st',
-                city: 'town',
-                state: 'Alabama',
+    for (let i = 0; i < 10; i++) {
+        let newUser = await new User({
+            username: `dev00${i}`,
+            bio: {
+                firstName: 'Dakota',
+                lastName: 'Boing',
+                age: 29
             },
-            billing: {
-                number: '1',
-                street: '1st',
-                city: 'town',
-                state: 'Alabama',
+            address: {
+                shipping: {
+                    number: '1',
+                    street: '1st',
+                    city: 'town',
+                    state: 'Alabama',
+                },
+                billing: {
+                    number: '1',
+                    street: '1st',
+                    city: 'town',
+                    state: 'Alabama',
+                }
+            },
+            contact: {
+                phone: '1234567890',
+                email: `dev${i}@dev.com`
             }
-        },
-        contact: {
-            phone: '1234567890',
-            email: 'dev@dev.com'
-        }
-    });
-    let password = 'dev';
-    await User.register(newUser, password);
-    await newUser.save();
-    console.log(newUser);
+        });
+        let password = 'dev';
+        await User.register(newUser, password);
+        await newUser.save();
+        console.log(newUser);
+    };
 };
 
 // seedUser();
@@ -67,7 +72,7 @@ console.log(currentUser);
 console.log('finished!')
 };
 
-seedInterests();
+// seedInterests();
 
 let seedProducts = async () => {
     await Product.deleteMany({});
@@ -143,5 +148,41 @@ console.log('Permissions Seeded!')
 };
 
 // seedPermissions();
+
+let getProducts = async () => {
+    let allProducts = await Product.find({});
+    await Product.deleteOne({ name: 'Coin' });
+    console.log(allProducts);
+};
+// getProducts();
+
+let seedDonationQueue = async () => {
+    let allDonations = await Donation.find({});
+    allDonations = allDonations.map(x => x.id);
+    await DonationQueue.deleteMany({});
+    let newQueue = await new DonationQueue();
+    newQueue.queue = [...allDonations];
+    console.log(newQueue);
+};
+
+// seedDonationQueue();
+
+let seedDonation = async () => {
+
+    let allUsers = await User.find({});
+    console.log(allUsers);
+    allUsers.forEach(async (element, index) => {
+        let newDonation = await new Donation({
+            user: element.id,
+            org: 'This is an example',
+            amount: 2,
+        }).save();
+    });
+    console.log('ALL DONATIONS');
+    let allDonations = await Donation.find({});
+    console.log(allDonations);
+};
+
+// seedDonation();
 
 

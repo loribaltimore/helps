@@ -11,7 +11,6 @@ import { MasterContext } from './MasterContext';
 import axios from 'axios';
 import FormData from 'form-data';
 
-
 function ProductForm(props) {
     let { setFlash } = useContext(MainContext);
     let { setAllProducts } = useContext(MasterContext);
@@ -20,6 +19,7 @@ function ProductForm(props) {
     let [cost, setCost] = useState('');
     let [lead, setLead] = useState('');
     let [img, setImg] = useState('');
+    let [code, setCode] = useState('');
     let [timeIncrement, setTimeIncrement] = useState('');
 
     let handleChange = (event) => {
@@ -36,14 +36,16 @@ function ProductForm(props) {
                 break;
             case 'lead': setLead(event.target.value);
                 break;
+            case 'code': setCode(event.target.value);
         }
     };
 
     let handleClick = async () => {
-            let form = new FormData();
+        let form = new FormData();
             form.append('img', img[0]);
             form.append('name', name);
             form.append('price', price);
+            form.append('code', code);
             form.append('cost', cost);
         form.append('lead', lead * timeIncrement);
         await axios.post(
@@ -56,6 +58,7 @@ function ProductForm(props) {
                 }
             ).then(data => {
                 setName('');
+                setCode('');
         setPrice('');
         setCost('');
         setLead('');
@@ -69,15 +72,31 @@ function ProductForm(props) {
         
 
     return (
-        <div style={{ backgroundColor: 'white' }}>
-            <TextField id="standard-basic" label="Name" variant="standard" name="name" value={name} onChange={(event) => textfieldChange(event)}/>
-            <TextField id="standard-basic" label="Price" variant="standard" name="price" value={price} onChange={(event) => textfieldChange(event)}/>
-            <TextField id="standard-basic" label="Cost" variant="standard" name="cost" value={cost} onChange={(event) => textfieldChange(event)}/>
-                <Grid container>
-                    <Grid item xs={3}>
+        <div style={{ backgroundColor: 'white', width: '50%', padding: '1%', borderRadius: '2rem', border: '1px solid black', textAlign: 'center' }}>
+            <h3>Create Product</h3>
+            <Grid container>
+                <Grid item xs={12}>
+                    <Grid container>
+                    <Grid item xs={6}  style={{margin: '0%'}}>
+                        <TextField style={{ padding: '1%' }} id="standard-basic" label="Name" variant="standard" name="name" value={name} onChange={(event) => textfieldChange(event)}/>
+                </Grid>
+                    <Grid item xs={6} style={{margin: '0%'}}>
+                        <TextField style={{padding: '1%', }} id="standard-basic" label="Price" variant="standard" name="price" value={price} onChange={(event) => textfieldChange(event)} />
+                    </Grid>
+                    </Grid>
+                    <Grid container>
+                    <Grid item xs={6}>
+                        <TextField style={{padding: '1%'}}  id="standard-basic" label="Code" variant="standard" name="code" value={code} onChange={(event) => textfieldChange(event)}/>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField style={{ padding: '1%' }} id="standard-basic" label="Cost" variant="standard" name="cost" value={cost} onChange={(event) => textfieldChange(event)} />
+                    </Grid>
+                    </Grid>
+                    <Grid container>
+                    <Grid item xs={6}>
                         <TextField id="standard-basic" label="Lead Time" variant="standard"  name="lead" value={lead} onChange={(event) => textfieldChange(event)}/>
                     </Grid>
-                    <Grid item xs={3} >
+                    <Grid item xs={6} >
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Time Increment</InputLabel>
                                 <Select
@@ -91,8 +110,12 @@ function ProductForm(props) {
                                         <MenuItem value={30}>Months</MenuItem>
                                 </Select>
                         </FormControl>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12}>
+                </Grid>
+                
+                    
+                    <Grid item xs={12} style={{padding: '1%'}}>
                     <Button variant="outlined" component="label"  style={{marginBottm: '1%'}}>
                             Add Image
                     <input type="file" name="img" hidden multiple onChange={(event) => { console.log(event.target.files); setImg(event.target.files) }}/>

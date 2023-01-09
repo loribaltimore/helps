@@ -1,7 +1,7 @@
 import Grid from '@mui/material/Grid';
 import CharityLike from './CharityLike';
 import CharityUnlike from './CharityUnlike';
-import CharityDonate from '../../components/CharityDonate';
+import CharityDonate from './CharityDonate';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 import { ExploreContext } from './ExploreContext';
 import { useContext, useState } from 'react';

@@ -6,8 +6,8 @@ import { ExploreContext } from './ExploreContext';
 
 function CharityLike(props) {
     let { org } = props;
-    let { currentCause, setAllLiked} = useContext(ExploreContext);
-    let { currentUser } = useContext(MainContext);
+    let { currentCause, setAllLiked, currentUser} = useContext(ExploreContext);
+    // let {  } = useContext(MainContext);
     
     let handleClick = async () => {
         console.log(currentCause);

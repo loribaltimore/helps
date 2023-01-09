@@ -21,6 +21,7 @@ module.exports.likeCharity = async (req, res, next) => {
     let { org, id, cause } = req.body;
     console.log(org, id, cause);
     org.sort = 0;
+    org.mongo_id = mongoose.Types.ObjectId();
     let currentUser = await User.findById(id);
    let updatedInterests = await currentUser.likeCharity(currentUser._id, org, cause).then(data => { return data }).catch(err => console.log(err));
     currentUser.charities.interests = updatedInterests;

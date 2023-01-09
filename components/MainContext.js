@@ -11,7 +11,7 @@ export function MainProvider(props) {
     let [flash, setFlash] = useState({ msg: undefined, type: undefined, render: false });
     let [cart, setCart] = useState(undefined);
     let [currentUser, setCurrentUser] = useState(undefined);
-    
+    console.log(currentUser);
     return (
         <div>
             <MainContext.Provider value={{setCurrentUser, currentUser, flash, setFlash, cart, setCart}}>
