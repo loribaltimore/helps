@@ -106,6 +106,10 @@ app.prepare().then(() => {
         app.render(req, res, '/userExplore', {});
     });
 
+    server.get('/donate', async (req, res, next) => {
+        app.render(req, res, '/donationPage', {});
+    });
+
     server.get('/recommended', async (req, res, next) => {
     let currentUser = await User.findById(req.user._id);
         let topInterests = currentUser.sortedInterests.slice(0, 3);

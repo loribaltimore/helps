@@ -6,8 +6,8 @@ import { useContext } from 'react';
 function ItemShowcase({product, onlyCoin}) {
     let { img, name, price } = product;
     let { cart, setCart } = useContext(MainContext);
-    console.log(onlyCoin);
     let handleClick = async () => {
+        console.log(onlyCoin);
         let response = await addToCart(cart, product, onlyCoin).then(data => { return data }).catch(err => console.log(err));
         setCart(response);
     };

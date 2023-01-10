@@ -65,6 +65,6 @@ export default function CheckoutBtn({ cart }) {
     );
 };
 
-create a walkthrough for users to choose which charities to give coin to
-create an option for them to round up to next coin amount
-create an option to add to pool 
+// create a walkthrough for users to choose which charities to give coin to
+// create an option for them to round up to next coin amount
+// create an option to add to pool 

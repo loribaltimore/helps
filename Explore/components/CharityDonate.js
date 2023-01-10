@@ -1,13 +1,17 @@
 import TollTwoToneIcon from '@mui/icons-material/TollTwoTone';
 import { MainContext } from '../../components/MainContext';
 import { useContext } from 'react';
+import { updateCoin } from '../../Cart/functions/updateCart';
 
 function CharityDonate(props) {
     let { org, currentCause } = props
-    let { currentUser } = useContext(MainContext);
+    let { setCart } = useContext(MainContext);
     
     let handleClick = async () => {
-        console.log('WAITING TO PROGRAM THIS FOR CHECKOUT');
+        let response = await updateCoin()
+            .then(data => { console.log(data); return data })
+            .catch(err => console.log(err));
+        // setCart(response.)
     };
     
     return (

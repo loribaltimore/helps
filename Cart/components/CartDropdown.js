@@ -9,6 +9,7 @@ import { useContext } from 'react';
 import { MainContext } from '../../components/MainContext';
 import { useRouter } from 'next/router'
 import CheckoutBtn from './CheckoutBtn';
+import DonateBtn from './DonateBtn';
 import TollTwoToneIcon from '@mui/icons-material/TollTwoTone';
 
 
@@ -96,7 +97,8 @@ function CartDropdown(props) {
         </Grid>
         {
           cart !== undefined && cart.items.length ?
-            <CheckoutBtn cart={cart}/> : ''
+            <DonateBtn /> : ''
+            // <CheckoutBtn cart={cart}/> : ''
       }
       </List>
     </div>

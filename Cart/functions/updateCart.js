@@ -4,7 +4,7 @@ let {createCart, CartItem} = require('./createCart.js');
 
 module.exports.addToCart = async (cart, item, coin) => {
     if (cart === undefined) {
-        cart = await createCart(item).then(data => { return data }).catch(err => console.log(err));
+        cart = await createCart(item, coin).then(data => { return data }).catch(err => console.log(err));
         let coinStr = ((cart.total / 2) / 10).toString().split('.');
         cart.coin = { code: coin.code, qty: parseFloat(coinStr[0].concat('.', coinStr[1].slice(0, 2)))};
         console.log(cart.coin);
@@ -52,5 +52,13 @@ module.exports.removeFromCart = async (cart, item) => {
     return cart.data.cart;
 };
 
+module.exports.updateCoin = async () => {
+    req.session.cart.coin.qty -= 1;
+    return req.session.cart;
+};
+
+update cart with above function to reflect new coin amount
+after pressing coin icon to choose charity
+then program pool request and pool add
 
 

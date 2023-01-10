@@ -42,13 +42,19 @@ class CartItem {
     };
 };
 
+class CartCharity {
+    constructor(name, img, ) {
+        this.name = name;
+    }
+}
 
-let createCart = async (item) => {
+
+let createCart = async (item, onlyCoin) => {
     let { name, price, img, code } = item;
     let newItem = new CartItem(name, price, 1, img[0].path, code);
     let coinStr = ((newItem.price / 2) / 10).toString().split('.');
     let coinTotal = parseFloat(coinStr[0].concat('.', coinStr[1].slice(0, 2)))
-    let newCart = new CartBuilder([newItem], newItem.price, coinTotal);
+    let newCart = new CartBuilder([newItem], newItem.price, {code: onlyCoin.code, qty: coinTotal});
    let response = await updateSession('cart', newCart)
         .then(data => { return data }).catch(err => console.log(err));
     return response.data.cart;
