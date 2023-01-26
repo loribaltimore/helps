@@ -9,6 +9,7 @@ const { parse } = require('url')
 const next = require('next');
 const Product = require('./models/productSchema');
 const  axios  = require('axios');
+const { MemoryStore } = require('express-session');
 const dev = process.env.NODE_ENV !== 'production'
 const hostname = 'localhost'
 const port = 3000
@@ -19,7 +20,7 @@ app.prepare().then(() => {
     
     //Database Connection
     let mongoose = require('mongoose');
-    mongoose.connect('mongodb://127.0.0.1:27017/helps')
+    mongoose.connect('mongodb://localhost:27017/helps')
         .then(console.log('Database is Live')).catch(err => console.log(err));
     
     //Express Connection
@@ -33,7 +34,9 @@ app.prepare().then(() => {
     let User = require('./models/userSchema');
     let Product = require('./models/productSchema');
     let Donation = require('./models/donationSchema');
-    
+    let DonationQueue = require('./models/donationQueueSchema');
+    let myCache = require('./util/myCache');
+
     //Required Packages
     let bodyParser = require('body-parser');
     let cookieParser = require('cookie-parser');
@@ -78,6 +81,7 @@ app.prepare().then(() => {
     passport.deserializeUser(User.deserializeUser());
 
 
+
     //Custom Middleware
     let errHandler = require('./middleware/errorHandling');
     let { getLanding } = require('./controllers/landing');
@@ -92,13 +96,29 @@ app.prepare().then(() => {
     let asyncCatch = require('./util/asyncCatch');
     let { productsPost, productsGet, productsDelete, productPut } = require('./Master/controllers/productsController');
     let { checkoutPost } = require('./Cart/controllers/cartControllers');
+    let addToQueue = require('./Checkout/functions/addToQueue');
+    let addToPool = require('./Checkout/functions/addToPool')
 
     //Routes
     server.get('/', async (req, res, next) => {
-        return app.render(req, res, '/landing', {});
+        let officialQueue = await DonationQueue.findOne({ name: 'officialQueue' });
+        let queue = await officialQueue.populateQueue().then(data => {return data}).catch(err => console.log(err))
+        return app.render(req, res, '/landing', {queue});
     });
 
     server.get('/home', async (req, res, next) => {
+        // console.log(req.sessionID);
+        // console.log(MemoryStore.get(req.sessionID));
+        let { success } = req.query;
+        if (Object.keys(req.query).length > 0) {
+            req.session.flash = {};
+            if (success !== undefined) {
+                req.flash('success', 'Purchase Successful!'); 
+                await addToQueue(cart).then(data => { return data }).catch(err => console.log(err));
+            } else {
+                req.flash('error', 'Purchase Successful!');
+            }
+        };
         app.render(req, res, '/homePage', {});
     })
 
@@ -128,8 +148,12 @@ app.prepare().then(() => {
        return app.render(req, res, '/userRecommended', {allRecs, interestsByName});
     });
 
-    server.get('/master', (req, res, next) => {
-        app.render(req, res, '/masterPage', {})
+    server.get('/master', async (req, res, next) => {
+        let officialQueue = await DonationQueue.findOne({ name: 'officialQueue' })
+            .then(data => { return data }).catch(err => console.log(err));
+        let queuePop = await officialQueue.populate('queue')
+            .then(data => { return data.queue }).catch(err => console.log(err));
+        app.render(req, res, '/masterPage', { officialQueue: queuePop })
     });
 
     server.get('/dashboard', async (req, res, next) => {
@@ -145,7 +169,9 @@ app.prepare().then(() => {
     server.put('/products', uploader.array('img'), asyncCatch(productPut));
     server.delete('/products', asyncCatch(productsDelete));
     server.post('/explore/charities/like', likeCharity);
-    server.put('/explore/charities/like', unlikeCharity)
+    server.put('/explore/charities/like', unlikeCharity);
+    // server.post('/queue', addToQueue);
+    // server.delete('/queue', removeFromQueue);
 
     //API Routes
     server.get('/explore/charities/:cause', charityByCause);
@@ -156,9 +182,31 @@ app.prepare().then(() => {
     server.get('/tester', async (req, res, next) => {
         let currentUser = await User.findOne({ username: 'dev' })
             .then(data => { return data }).catch(err => console.log(err));
-        return res.send({currentUser});
+        return res.send({user: currentUser, cart: req.session.cart});
     });
     server.post('/checkout', checkoutPost);
+    server.post('/pool', addToPool);
+    
+    // const endpointSecret = "whsec_a5052c84697a6daa5e024df66ecf25fdaf1aa7e84389d16bb6ff04ea69b0eb32";
+    server.post('/webhook', express.raw({ type: 'application/json' }), async (req, res, next) => {
+            let { data, type } = req.body;
+            // console.log(req.session)
+            switch (type) {
+                case 'charge.succeeded':
+                    console.log('Stripe Charge ID');
+                    console.log(data.object.id);
+                    // await addToQueue(req.session.cart, data.object.id)
+                    // .then(data => console.log(data)).catch(err => console.log(err));
+
+                break;
+              default:
+                console.log(`Unhandled event type ${type}`);
+            }
+          
+            // Return a 200 response to acknowledge receipt of the event
+            res.send(200);
+          });
+  
 
     //login Routes
     server.get('/login', async (req, res, next) => {
@@ -183,6 +231,10 @@ app.prepare().then(() => {
 });
 
 });
+
+
+
+// set up a front end master GUI that takes the donationQueue
 
 //start working with stripe!!!!
 

@@ -1,22 +1,19 @@
-import { MainContext } from '../components/MainContext';
-import { useContext } from 'react';
+
 import Alert from '@mui/material/Alert';
 
-function Flash(props) {
-    let { flash, setFlash } = useContext(MainContext);
+function Flash({ flash, setRenderFlash }) {
+    let { success, error, info } = flash;
+    let flashType = Object.keys(flash)[0];
+    let flashMsg = flash[flashType][0];
+ 
     return (
-        <div>
+        <div style={{marginBottom: '3%'}}>
             {
-                flash.render === true && flash.msg !== undefined ?
-                <Alert severity={flash.type} onClose={() => {setFlash({msg: undefined, type: undefined, render: false})}}>{flash.msg}</Alert> : ''
+                 flashType !== undefined ?
+                    <Alert severity={flashType} onClose={() => {setRenderFlash(false)}}>{flashMsg}</Alert> : ''
             }
         </div>
     )
 };
 
 export default Flash;
-
-//flash seems to be finished
-///create landing page design
-//understand how to donate via charity API;
-///integrate stripe

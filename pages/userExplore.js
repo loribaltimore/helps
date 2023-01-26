@@ -65,15 +65,15 @@ function Explore({ user }) {
 };
 
 Explore.getInitialProps = async (ctxt) => {
-    // let { user } = ctxt.req;
-    // return { user: user._doc };
-    let response = await axios({
-        method: 'get',
-        url: 'http://localhost:3000/tester'
-    }).then(data => { return data}).catch(err => console.log(err));
-    let { data } = response;
-    let { currentUser } = data;
-    return { user: currentUser };
+    let { user } = ctxt.req;
+    return { user: user._doc };
+    // let response = await axios({
+    //     method: 'get',
+    //     url: 'http://localhost:3000/tester'
+    // }).then(data => { return data}).catch(err => console.log(err));
+    // let { data } = response;
+    // let { currentUser } = data;
+    // return { user: currentUser };
 }   
 
 export default Explore;

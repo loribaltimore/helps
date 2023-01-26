@@ -1,7 +1,7 @@
 
 
 module.exports.loginPost = async (req, res, next) => {
-    console.log('login post')
+    req.flash('success', 'Log In Successful!');
     return res.send(req.user);
 };
 

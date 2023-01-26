@@ -1,39 +1,53 @@
 import Grid from '@mui/material/Grid';
 import CharityLike from './CharityLike';
 import CharityUnlike from './CharityUnlike';
-import CharityDonate from './CharityDonate';
+import CharityDonate from '../../Checkout/components/CharityDonate';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
-import { ExploreContext } from './ExploreContext';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import Undonate from '../../Checkout/components/Undonate';
+import { MainContext } from '../../components/MainContext';
 import { useContext, useState } from 'react';
 
 function CharityCard(props) {
-    let { org, cardType, liked } = props;
+    let { org, cardType, liked, cart} = props;
     let [isHover, setIsHover] = useState(false);
+    
 
     let styles = {
-        liked: {
+        like: {
             true: 'lightpink',
+            false: 'white'
+        },
+        donate: {
+            true: 'goldenrod',
             false: 'white'
         }
     };
 
-    let handleHover = () => {
+    let handlehover = () => {
         setIsHover(true);
     }
-    let handleLeave = () => {
+    let handleleave = () => {
         setIsHover(false);
     }
 
     let icons = {
-        false: <FavoriteOutlinedIcon style={{ color: 'red', fontSize: '3rem', cursor: 'pointer' }} onMouseEnter={() => handleHover()} onMouseLeave={() => handleLeave()}/>,
-        true: <CharityUnlike org={org} handleHover={handleHover} handleLeave={handleLeave}/>
+        like: {
+            false: <FavoriteOutlinedIcon style={{ color: 'red', fontSize: '3rem', cursor: 'pointer' }} onMouseEnter={() => handlehover()} onMouseLeave={() => handleleave()}/>,
+            true: <CharityUnlike org={org} handlehover={handlehover} handleleave={handleleave} />    
+        },
+        donate: {
+            false: <TaskAltIcon style={{color: 'green', fontSize: '3rem', cursor: 'pointer' }} onMouseEnter={() => handlehover()} onMouseLeave={() => handleleave()}/>,
+            true: <Undonate org={org} handlehover={handlehover} handleleave={handleleave} cart={cart}/>
+        }
     };
 
     
     let maxDescLength = org.description.split('').slice(0, 240).join('');
     return (
         <div>
-            <Grid container style={{ border: '2px solid black', borderRadius: '1rem', width: '25rem', height: '30rem', backgroundColor: styles.liked[liked], margin: '5%' }}>
+            <Grid container style={{ border: '2px solid black', borderRadius: '1rem', width: '25rem', height: '30rem', backgroundColor: styles[cardType][liked], margin: '5%' }}>
             
             <Grid item xs={2.25} style={{height: '2rem', marginBottom: '0%', paddingTop: '2%'  }}>
                                 <img src={org.logoUrl} style={{ paddingLeft: '1rem' }} />
@@ -57,10 +71,10 @@ function CharityCard(props) {
                 <div style={{position: 'relative', left: '80%', width: '3rem'}}>
                     {   liked !== true && cardType !== undefined ?
                         cardType === 'donate' ?
-                                <CharityDonate org={org}  />
+                                <CharityDonate org={org} cart={cart}/>
                                 :
                                 <CharityLike org={org}  />
-                            : icons[isHover]
+                            : icons[cardType][isHover]
                         }
                         </div>
                 </Grid>

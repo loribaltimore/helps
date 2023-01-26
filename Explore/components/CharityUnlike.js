@@ -6,7 +6,7 @@ import { useContext } from 'react';
 
 
 function CharityUnlike(props) {
-    let { org, handleHover, handleLeave } = props;
+    let { org, handlehover, handleleave } = props;
     let {  currentCause, setAllLiked } = useContext(ExploreContext);
 
     let handleClick = async() => {
@@ -18,8 +18,8 @@ function CharityUnlike(props) {
         <div>
             <HeartBrokenIcon style={{ color: 'red', fontSize: '3rem', cursor: 'pointer' }}
                 onClick={() => handleClick()}
-                onMouseEnter={() => handleHover()}
-                onMouseLeave={() => handleLeave()} />
+                onMouseEnter={() => handlehover()}
+                onMouseLeave={() => handleleave()} />
         </div>
     )
 };

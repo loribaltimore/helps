@@ -1,3 +1,43 @@
-h2{
-    font-family: 'Shirkhand';
+.stylized {
+    font-family: 'Shrikhand', cursive;
 }
+
+.circle {
+    height: 17.5rem;
+    width: 17.5rem;
+    background-color: #5ce1e6;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+.graphicCircle {
+    height: 5rem;
+    width: 5rem;
+    border-radius: 50%;
+    border-style: solid;
+    border-color: grey;
+    border-width: 4px;
+    display: inline-block;
+  }
+
+  .wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .marquee {
+    display: inline-block;
+  }
+  
+  .marquee p {
+    display: inline-block;
+  }
+  
+  @keyframes marquee {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }

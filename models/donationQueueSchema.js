@@ -1,6 +1,7 @@
 let mongoose = require('mongoose');
 let { Schema, model } = mongoose;
-let Donation = require('./donationSchema');
+let { donationSchema } = mongoose;
+let Donation = model('donation', donationSchema);
 
 let donationQueueSchema = new Schema({
     name: {
@@ -9,24 +10,17 @@ let donationQueueSchema = new Schema({
     },
     queue: [
         {
-        type: Schema.Types.ObjectId,
-            ref: 'Donation',
+            type: Schema.Types.ObjectId,
+            ref: 'donation',
         }
     ],
     pool: {
-        amount: {
-            type: Number,
-            default: 0
-        },
-        donators: [
-            {
-                type: String
-            }
-        ]
+        type: Map,
+        of: Object,
+        default: new Map()
     }
 });
 
-let DonationQueue = model('donationQueue', donationQueueSchema)
 
 donationQueueSchema.method('removeFromQueue', async (donationId) => {
     let queue = await DonationQueue.findOne({ name: 'officialQueue' });
@@ -45,16 +39,37 @@ donationQueueSchema.method('removeFromQueue', async (donationId) => {
 })
 
 donationQueueSchema.method('addToQueue', async (donationId) => {
-    let queue = await DonationQueue.findOne({name: 'officialQueue'});
+    let queue = await DonationQueue.findOne({ name: 'officialQueue' });
     console.log(queue.queue.length);
     queue.queue.push(donationId);
     await queue.save();
     console.log(queue.queue.length);
+});
 
-})
+donationQueueSchema.method('addToPool', async (amt, name, id) => {
+    let queue = await DonationQueue.findOne({ name: 'officialQueue' });
+    let currentDonator = queue.pool.get(id);
+    currentDonator === undefined ?
+        queue.pool.set(id, { amt, name }) : queue.pool.set(id, {amt: currentDonator.amt + amt, name});
+    // queue.pool.amount += amt;
+    // queue.pool.donators.push(name);
+    await queue.save();
+});
 
+donationQueueSchema.method('populateQueue', async () => {
+    let queue = await DonationQueue.findOne({ name: 'officialQueue' });
+    let popQueue = await queue.populate('queue')
+        .then(data => { return data.queue.slice(0, 150) })
+        .catch(err => console.log(err));
+    return popQueue;
+});
+
+
+
+let DonationQueue = model('donationqueue', donationQueueSchema);
 
 module.exports = DonationQueue;
+
 
 
 

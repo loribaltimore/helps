@@ -2,12 +2,10 @@ let axios = require('axios');
 let updateSession = require('../../functions/updateSession');
 let {createCart, CartItem} = require('./createCart.js');
 
-module.exports.addToCart = async (cart, item, coin) => {
+module.exports.addToCart = async (currentUser, cart, item, coin) => {
     if (cart === undefined) {
-        cart = await createCart(item, coin).then(data => { return data }).catch(err => console.log(err));
-        let coinStr = ((cart.total / 2) / 10).toString().split('.');
-        cart.coin = { code: coin.code, qty: parseFloat(coinStr[0].concat('.', coinStr[1].slice(0, 2)))};
-        console.log(cart.coin);
+        cart = await createCart(currentUser, item, coin).then(data => { return data }).catch(err => console.log(err));
+        cart.coin = { code: coin.code, qty: ((cart.total / 2) / 5)};
         return cart;
     } else {
         let { name, price, img, code } = item;
@@ -20,10 +18,11 @@ module.exports.addToCart = async (cart, item, coin) => {
             cart.items[cartItems.indexOf(name)].qty += 1;
         };
         cart.total += price;
-        let cartStr = cart.total.toString().split('.');
-        cart.total = parseFloat(cartStr[0].concat('.', cartStr[1].slice(0, 2)))
-        let coinStr = ((cart.total / 2) / 10).toString().split('.');
-        cart.coin.qty = parseFloat(coinStr[0].concat('.', coinStr[1].slice(0, 2)))
+        newItem.name !== 'Coin' ?
+            cart.coin.qty = ((cart.total / 2) / 5)
+            :
+            cart.coin.qty += 1;
+        
         cart = await updateSession('cart', cart)
             .then(data => { return data }).catch(err => console.log(err));
         return cart.data.cart;
@@ -38,6 +37,7 @@ module.exports.removeFromCart = async (cart, item) => {
     let currentItem = cart.items[cartItems.indexOf(item.name)]
     currentItem.qty -= 1;
     cart.total -= item.price;
+    cart.coin.qty = ((cart.total / 2) / 5);
     if (currentItem.qty === 0) {
         currentItem.sort = 1;
         cart.items.sort(function (a, b) {
@@ -52,13 +52,25 @@ module.exports.removeFromCart = async (cart, item) => {
     return cart.data.cart;
 };
 
-module.exports.updateCoin = async () => {
-    req.session.cart.coin.qty -= 1;
-    return req.session.cart;
+module.exports.updateCoin = async (cart, org, amt) => {
+    console.log('UPDATING COIN');
+    console.log(cart, org, amt);
+    cart.coin.qty += amt;
+    if (amt < 1) {
+        cart.toDonate.push(org);
+    } else {
+        cart.toDonate = cart.toDonate.filter(x => x !== org);
+    };
+    cart = await updateSession('cart', cart)
+        .then(data => { return data }).catch(err => console.log(err));
+    return cart.data.cart;
 };
 
-update cart with above function to reflect new coin amount
-after pressing coin icon to choose charity
-then program pool request and pool add
+//FIX ADDING ITEMS TO CART FROM HOME PAGE AND RENDERING IN CART DROP DOWN
+//poolprompt
+
+// update cart with above function to reflect new coin amount
+// after pressing coin icon to choose charity
+// then program pool request and pool add
 
 

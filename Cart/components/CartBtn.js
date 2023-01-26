@@ -4,17 +4,17 @@ import { useContext, useState } from 'react';
 import getSession from '../../functions/getSession';
 import CartDropdown from './CartDropdown';
 
-function CartBtn(props) {
+function CartBtn({currentUser, cart}) {
     let [isCart, setIsCart] = useState(false);
-    let { cart, setCart } = useContext( MainContext );
+    // let { cart, setCart } = useContext( MainContext );
 
     let handleClick = async () => {
         setIsCart(!isCart)
-        await getSession().then(data => {
-            if (data.cart !== undefined) {
-                setCart(data.cart);
-            };
-        })
+        // await getSession().then(data => {
+        //     if (data.cart !== undefined) {
+        //         setCart(data.cart);
+        //     };
+        // })
     };
     
     return (
@@ -23,7 +23,7 @@ function CartBtn(props) {
          
             {
                 isCart === true ?
-                    <CartDropdown cart={cart}/> : ''
+                    <CartDropdown cart={cart} isFinalStep={false} currentUser={currentUser}/> : ''
         }
         </div>
     )

@@ -9,7 +9,9 @@ import CartBtn from '../Cart/components/CartBtn';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
-function Navbar({currentUser}) {
+
+function Navbar({ currentUser }) {
+    let { cart } = useContext(MainContext);
     
     let isAdmin = false;
     if (currentUser !== undefined
@@ -38,7 +40,7 @@ function Navbar({currentUser}) {
                         </Link>
                     </Grid>
                             <Grid item xs={gridW[isAdmin]} style={{textAlign: 'center'}}>
-                        <CartBtn />
+                        <CartBtn currentUser={currentUser} cart={cart} />
                             </Grid>
                             <Grid item xs={gridW[isAdmin]} style={{textAlign: 'center'}}>
                                 <UserMenu />

@@ -1,11 +1,14 @@
 const axios = require("axios");
-import updateSession from '../../functions/updateSession';
+let updateSession = require('../../functions/updateSession');
 
 class CartBuilder{
-    constructor(items, total, coin) {
+    constructor(currentUser, items, total, coin, toDonate = [],  pool = 0) {
+        this.currentUser = currentUser;
         this.items = items;
         this.total = total;
         this.coin = coin
+        this.toDonate = toDonate;
+        this.pool = pool;
     };
     remove() {
         this.items.sort(function (a, b) {
@@ -26,7 +29,7 @@ class CartBuilder{
 };
 
 class CartItem {
-    constructor(name, price, qty, img, code, sort = 0 ) {
+    constructor(name, price, qty, img, code, sort = 0,) {
         this.name = name;
         this.price = price;
         this.qty = qty;
@@ -42,19 +45,11 @@ class CartItem {
     };
 };
 
-class CartCharity {
-    constructor(name, img, ) {
-        this.name = name;
-    }
-}
 
-
-let createCart = async (item, onlyCoin) => {
+let createCart = async (currentUser, item, onlyCoin) => {
     let { name, price, img, code } = item;
     let newItem = new CartItem(name, price, 1, img[0].path, code);
-    let coinStr = ((newItem.price / 2) / 10).toString().split('.');
-    let coinTotal = parseFloat(coinStr[0].concat('.', coinStr[1].slice(0, 2)))
-    let newCart = new CartBuilder([newItem], newItem.price, {code: onlyCoin.code, qty: coinTotal});
+    let newCart = new CartBuilder(currentUser, [newItem], newItem.price, { code: onlyCoin.code, qty: (newItem.price / 2) / 5 });
    let response = await updateSession('cart', newCart)
         .then(data => { return data }).catch(err => console.log(err));
     return response.data.cart;

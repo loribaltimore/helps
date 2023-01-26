@@ -11,7 +11,7 @@ import { MainContext } from '../../components/MainContext';
 
 function LoginForm(props) {
     let Router = useRouter();
-    let { currentUser, setFlash } = useContext(MainContext);
+    let { currentUser } = useContext(MainContext);
     let [username, setUsername] = useState('');
     let [pass, setPass] = useState('');
 
@@ -19,7 +19,6 @@ function LoginForm(props) {
          await checkCredentials(username, pass)
              .then(data => {
                 if (data.bio) {
-                    setFlash({ msg: 'Successfully Logged In', type: 'success', render: false });
                     Router.push('/home');
                 } else {
                     setUsername('');

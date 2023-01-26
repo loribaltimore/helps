@@ -1,47 +1,58 @@
 import Grid from '@mui/material/Grid';
-import CharityCard from '../Explore/components/CharityCard';
-import axios from 'axios';
-import { useContext } from 'react';
+import PoolPrompt from '../Checkout/components/PoolPrompt';
+import { useContext, useEffect, useState} from 'react';
 import { MainContext } from '../components/MainContext';
+import CharityCard from '../Explore/components/CharityCard';
 import CartDropdown from '../Cart/components/CartDropdown';
-// import { fabClasses } from '@mui/material';
 
-function donationPage(props) {
-    let { user, cart } = props;
-    let { setCart } = useContext(MainContext);
-    console.log("working");
+function donationPage({ user, sessionCart }) {
+    let { setCart, cart } = useContext(MainContext);
+
+    useEffect(() => {
+        setCart(sessionCart);
+    }, []);
+    console.log(cart);
 
     return (
-        <Grid container>
-            <Grid item xs={12} style={{width: '50%', position: 'sticky', left: '30%'}}>
-                <CartDropdown cart={cart}/>
-            </Grid>
-            {
+        <div>
+            <div style={{ position: 'fixed', left: '36%', zIndex: '1' }}>
+                
+                <CartDropdown isFinalStep={true} />
+             
+            </div>
+                <Grid container style={{paddingTop: '15%', zIndex: '1'}}>
+                {
+                    cart !== undefined ?
                     user.charities.liked.orgs.map(function (element, index) {
-                        if (index % 2 === 0) {
-                            return <Grid item xs={6} style={{ marginBottom: '5rem' }} key={index}>
-                                <CharityCard org={element} cardType={'donate'} liked={false}/>
-                                </Grid>
-                        } else {
-                            return <Grid item xs={6} style={{ position: 'relative', top: '15rem' }} key={index}>
-                                <CharityCard org={element} cardType={'donate'} liked={false}/>
-                          </Grid> 
-                        }
-                })
-            }
-        </Grid>
+                        let liked = undefined;
+                        cart.toDonate.indexOf(element.name) > -1 ?
+                            liked = true : liked = false;
+                                if (index % 2 === 0) {
+                                    return <Grid item xs={6} style={{ marginBottom: '5rem' }} key={index}>
+                                        <CharityCard org={element} cardType={'donate'} liked={liked} cart={cart} />
+                                        </Grid>
+                                } else {
+                                    return <Grid item xs={6} style={{ position: 'relative', top: '15rem' }} key={index}>
+                                        <CharityCard org={element} cardType={'donate'} liked={liked} cart={cart} />
+                                </Grid> 
+                                }
+                        }) : ''
+                    }
+                </Grid>
+         </div>
     )
 };
 
 donationPage.getInitialProps = async (ctxt) => {
     let { req } = ctxt;
+        return { user: req.user, sessionCart: req.session.cart};
+
     // let response = await axios({
     //     method: 'get',
     //     url: 'http://localhost:3000/tester'
     // }).then(data => { return data}).catch(err => console.log(err));
     // let { data } = response;
     // return { data };
-    return { user: req.user, cart: req.session.cart };
 }
 
 export default donationPage;

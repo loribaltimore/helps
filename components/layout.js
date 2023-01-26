@@ -2,6 +2,7 @@ import Grid from '@mui/material/Grid'
 import Item from '@mui/material/Grid';
 import BackBtn from './BackBtn';
 import noBackBtn from '../util/noBackBtn';
+import DonatorScroll from './DonatorScroll';
 import { useRouter } from 'next/router';
 
 function Layout(props) {
@@ -15,8 +16,9 @@ function Layout(props) {
             } */}
             <Grid container >
             <Grid item xs={2.25}></Grid>
-                <Grid item xs={7.5} style={{backgroundImage: `url(${'/img/logo.jpeg'})`, ackgroundImage: `url(${'/img/logo.jpeg'})`, backgroundSize: '10%', backgroundAttachment: 'fixed', backgroundPosition: 'center', height: '100%'}}>    
-                <Item style={{paddingTop: '5%'}}>{props.children}</Item>
+                <Grid item xs={7.5} style={{backgroundImage: `url(${'/img/logo.jpeg'})`, backgroundSize: '10%', backgroundAttachment: 'fixed', backgroundPosition: 'center', height: '100%'}}>    
+                    <Item style={{ paddingTop: '5%' }}>{props.children}</Item>
+                    <DonatorScroll />
             </Grid>
             <Grid item xs={2.25}></Grid>
             </Grid>   

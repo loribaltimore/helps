@@ -6,13 +6,17 @@ import { explore, recommended } from '../util/interactions';
 import { MainContext } from '../components/MainContext';
 import { useContext, useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
+import Flash from '../components/Flash';
+import PoolPrompt from '../Checkout/components/PoolPrompt';
 
-function Home({user, products }) {
-    let { flash, setFlash } = useContext(MainContext);
-    let [isEven, setIsEven] = useState(false);
-    let [counter, setCounter] = useState(0);
+
+function Home({user, products, flash}) {
     let [productsAndInteractionsMixed, setProductsAndInteractionsMixed ] = useState(undefined)
+    let [renderFlash, setRenderFlash] = useState(flash !== undefined);
+    let { cart } = useContext(MainContext);
     let onlyCoin = products.filter(x => x.name === 'Coin')[0];
+    console.log('home rerender');
+
     useEffect(() => {
         let interactions = [explore, recommended];
         let productsNoCoin = products.filter(x => x.name !== 'Coin');
@@ -33,14 +37,21 @@ function Home({user, products }) {
             return a.sort - b.sort
         });
         setProductsAndInteractionsMixed(mixed);
-        flash.msg !== undefined ?
-            setFlash({ msg: flash.msg, type: flash.type, render: true }) : ''
     }, [])
 
     
     return (
     <div>
-            <Navbar currentUser={user}/>
+            <Navbar currentUser={user} />
+            {
+                renderFlash === true ?
+                    <Flash flash={flash} setRenderFlash={setRenderFlash}/> : ''
+            }
+            {
+                cart !== undefined ?
+                <PoolPrompt cart={cart}/> : ''
+
+            }
             <Grid container>
                 {
                     productsAndInteractionsMixed !== undefined ?
@@ -50,7 +61,7 @@ function Home({user, products }) {
                                 {
                                     element.route ?
                                         <InteractionPanel interaction={element} />
-                                        : <ItemPanel product={element} onlyCoin={onlyCoin}/>
+                                        : <ItemPanel currentUser={user} product={element} onlyCoin={onlyCoin}/>
                                 }
                                     </Grid>
                         } else {
@@ -58,7 +69,7 @@ function Home({user, products }) {
                                        {
                                     element.route ?
                                         <InteractionPanel interaction={element} />
-                                        : <ItemPanel product={element} onlyCoin={onlyCoin}/>
+                                        : <ItemPanel currentUser={user} product={element} onlyCoin={onlyCoin}/>
                                 }
                                     </Grid>
                         }
@@ -74,10 +85,10 @@ Home.getInitialProps = async (ctxt) => {
         method: 'get',
         url: 'http://localhost:3000/products'
     }).then(data => { return data }).catch(err => console.log(err));
-    let {data} = response
-    return {products: data.allProducts, user: ctxt.req.user};
+    let { data } = response
+    console.log(ctxt.req.session.flash);
+    return {products: data.allProducts, user: ctxt.req.user, flash: ctxt.req.session.flash};
 }
 
 export default Home;
 
-// add interaction panels to home page reconfigure how items display / spacing;

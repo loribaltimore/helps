@@ -8,13 +8,15 @@ export let MainContext = createContext();
 
 export function MainProvider(props) {
     console.log('MAIN CONTEXT RERENDER')
-    let [flash, setFlash] = useState({ msg: undefined, type: undefined, render: false });
     let [cart, setCart] = useState(undefined);
+    let [renderPool, setRenderPool] = useState(false);
     let [currentUser, setCurrentUser] = useState(undefined);
-    console.log(currentUser);
+    let [donators, setDonators] = useState(undefined);
+    // console.log(currentUser);
+    // console.log(cart);
     return (
         <div>
-            <MainContext.Provider value={{setCurrentUser, currentUser, flash, setFlash, cart, setCart}}>
+            <MainContext.Provider value={{setCurrentUser, currentUser,  cart, setCart, setRenderPool, renderPool, setDonators, donators}}>
                 {props.children}
             </MainContext.Provider>
         </div>

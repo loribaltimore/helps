@@ -3,13 +3,12 @@ import {addToCart} from '../../Cart/functions/updateCart';
 import { MainContext } from '../../components/MainContext';
 import { useContext } from 'react';
 
-function ItemShowcase({product, onlyCoin}) {
+function ItemShowcase({currentUser, product, onlyCoin, setRerender, rerender}) {
     let { img, name, price } = product;
     let { cart, setCart } = useContext(MainContext);
+
     let handleClick = async () => {
-        console.log(onlyCoin);
-        let response = await addToCart(cart, product, onlyCoin).then(data => { return data }).catch(err => console.log(err));
-        setCart(response);
+        let response = await addToCart(currentUser, cart, product, onlyCoin).then(data => { setCart(data) }).catch(err => console.log(err));
     };
 
     return (

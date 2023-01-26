@@ -1,10 +1,11 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+
 module.exports.checkoutPost = async (req, res, next) => {
     let { cart } = req.body;
 
     console.log('THIS SHOULD BE CART');
-    console.log(req.body);
+    console.log(req.headers.origin);
       if (req.method === 'POST') {
         try {
           // Create Checkout Sessions from body params.
@@ -17,8 +18,8 @@ module.exports.checkoutPost = async (req, res, next) => {
                       }
                   }),
             mode: 'payment',
-            success_url: `${req.headers.origin}/?success=true`,
-            cancel_url: `${req.headers.origin}/?canceled=true`,
+            success_url: `${req.headers.origin}/home?success=true`,
+            cancel_url: `${req.headers.origin}/home?canceled=true`,
           });
           res.redirect(303, session.url);
         } catch (err) {
