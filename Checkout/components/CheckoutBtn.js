@@ -6,7 +6,7 @@ import { MainContext } from '../../components/MainContext';
 // import { AnimationOutlined } from '@mui/icons-material';
 
 
-export default function CheckoutBtn({canCheckout}) {
+export default function CheckoutBtn({canCheckout, toPool, setOpen}) {
   let { setCart, cart } = useContext(MainContext);
 
     React.useEffect(() => {
@@ -21,11 +21,11 @@ export default function CheckoutBtn({canCheckout}) {
       }
     }, []);
   
-  let handleClick = async () => {
-    
+  let handleClick = function (event) {
+    event.preventDefault();
+    setOpen(true);
   };
     
-  
   return (
     <div>
       {cart !== undefined ?
@@ -34,14 +34,15 @@ export default function CheckoutBtn({canCheckout}) {
           cart.items.map(function (element, index) {
             return <input name={`cart[]`} defaultValue={element.code + ':' + element.qty} key={index} hidden/>
           })
-        }
+          }
+          <input name="toPool" value={toPool} hidden/>
         <input defaultValue={cart.coin.code + ':' + Math.floor(cart.coin.qty)} name="cart[]" hidden/>
           <section>
             {
               canCheckout === true ?
                 <button type="submit" role="link"> Checkout </button>
                 :
-                <button type="submit" role="link" disabled> Checkout </button>
+                <button onClick={(event) => handleClick(event)}> Checkout </button>
             }
         </section>
         <style jsx>

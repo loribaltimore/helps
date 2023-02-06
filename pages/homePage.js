@@ -47,11 +47,6 @@ function Home({user, products, flash}) {
                 renderFlash === true ?
                     <Flash flash={flash} setRenderFlash={setRenderFlash}/> : ''
             }
-            {
-                cart !== undefined ?
-                <PoolPrompt cart={cart}/> : ''
-
-            }
             <Grid container>
                 {
                     productsAndInteractionsMixed !== undefined ?

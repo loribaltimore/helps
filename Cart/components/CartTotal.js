@@ -2,15 +2,15 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
 import TollTwoToneIcon from '@mui/icons-material/TollTwoTone';
-
+import PoolIcon from '@mui/icons-material/Pool';
 
 function CartTotal({cart}) {
 
     return (
         <div>
             
-        <Grid container style={{ width: '50%' }}>
-<Grid item xs={6}>
+        <Grid container>
+<Grid item xs={4}>
       {
       cart !== undefined ?
         <ListItem >
@@ -23,7 +23,7 @@ function CartTotal({cart}) {
       }
 </Grid>
 
-<Grid item xs={6}>
+<Grid item xs={4}>
       {
         cart !== undefined ?
           <ListItem >
@@ -35,6 +35,15 @@ function CartTotal({cart}) {
           </ListItem>
       }
 </Grid>
+      <Grid item xs={4}>
+              {
+              cart !== undefined ?
+              <ListItem >
+                  <PoolIcon style={{ color: 'blue', fontSize: '2rem' }} /> {cart.pool}
+                  </ListItem>
+                  : ''
+          }
+      </Grid>
 </Grid>
 
         </div>
@@ -42,3 +51,5 @@ function CartTotal({cart}) {
 };
 
 export default CartTotal;
+
+// charity pool vote component / resource;

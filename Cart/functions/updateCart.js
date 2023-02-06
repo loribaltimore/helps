@@ -1,28 +1,41 @@
 let axios = require('axios');
+const { ConnectionStates } = require('mongoose');
 let updateSession = require('../../functions/updateSession');
 let {createCart, CartItem} = require('./createCart.js');
 
 module.exports.addToCart = async (currentUser, cart, item, coin) => {
+    let { name, price, img, code, qty } = item;
+
     if (cart === undefined) {
         cart = await createCart(currentUser, item, coin).then(data => { return data }).catch(err => console.log(err));
         cart.coin = { code: coin.code, qty: ((cart.total / 2) / 5)};
         return cart;
     } else {
-        let { name, price, img, code } = item;
+        console.log('THIS IS QTY', qty)
+        qty === undefined ?
+            qty = 1 : qty = qty;
         let newItem = undefined;
         let cartItems = cart.items.map(x => x.name);
         if (cartItems.indexOf(name) === -1) {
-            newItem = new CartItem(name, price, 1, img[0].path, code);
-            cart.items.push(newItem);
+            newItem = new CartItem(name, price, qty, img[0].path, code);
+            cart.items.push(newItem);  
         } else {
-            cart.items[cartItems.indexOf(name)].qty += 1;
+            console.log('THIS IS QTY');
+            console.log(qty);
+            cart.items[cartItems.indexOf(name)].qty
+                +=
+                name !== 'Coin' ?
+                    1 : qty;
         };
-        cart.total += price;
-        newItem.name !== 'Coin' ?
-            cart.coin.qty = ((cart.total / 2) / 5)
-            :
-            cart.coin.qty += 1;
-        
+
+        if (name !== 'Coin') {
+            cart.coin.qty += ((price / 2) / 5);
+            cart.total += price;
+        } else {
+            cart.coin.qty += qty;
+            cart.total += (price * qty);
+        };
+
         cart = await updateSession('cart', cart)
             .then(data => { return data }).catch(err => console.log(err));
         return cart.data.cart;
@@ -37,7 +50,15 @@ module.exports.removeFromCart = async (cart, item) => {
     let currentItem = cart.items[cartItems.indexOf(item.name)]
     currentItem.qty -= 1;
     cart.total -= item.price;
-    cart.coin.qty = ((cart.total / 2) / 5);
+    if (item.name === 'Coin') {
+        cart.coin.qty = Math.abs(cart.coin.qty - 1);
+        if (cart.toDonate.length > ((cart.total / 2) / 5) - (item.qty * 5)) {
+            cart.toDonate.pop();
+        }
+    } else {
+        cart.coin.qty -= ((item.price / 2) / 5);
+    };
+    
     if (currentItem.qty === 0) {
         currentItem.sort = 1;
         cart.items.sort(function (a, b) {
@@ -55,16 +76,50 @@ module.exports.removeFromCart = async (cart, item) => {
 module.exports.updateCoin = async (cart, org, amt) => {
     console.log('UPDATING COIN');
     console.log(cart, org, amt);
+
     cart.coin.qty += amt;
-    if (amt < 1) {
+
+    if (Math.abs(amt) % 2 === 0) {
+        if (amt < 0) {
+            org.coinTotal = 2;
         cart.toDonate.push(org);
     } else {
-        cart.toDonate = cart.toDonate.filter(x => x !== org);
-    };
+        cart.toDonate = cart.toDonate.filter(x => x.name !== org.name);
+        }
+    } else {
+        console.log('IT IS IN FACT AN ODD NUMBER');
+            cart.toDonate = cart.toDonate.map(function (element, index) {
+                if (element.name === org.name) {
+                    if (amt < 0) {
+                        element.coinTotal += 1;  
+                    } else {
+                        element.coinTotal -= 1;  
+                    }
+                };
+                return element;
+            });
+    }
     cart = await updateSession('cart', cart)
         .then(data => { return data }).catch(err => console.log(err));
     return cart.data.cart;
 };
+
+module.exports.updatePool = async (cart, amt) => {
+    cart.pool += amt;
+    cart.coin.qty -= amt;
+    
+    cart = await updateSession('cart', cart)
+    .then(data => { return data }).catch(err => console.log(err));
+return cart.data.cart;
+};
+
+// amount for each donation will have to be a static 10 or dynamic value
+// if want to be dynamic then change the charityDonate component to allow for multiple coins 
+//     to be put on one org 
+//     then each resource in queue will have different value
+//     DO this and add each purchase to customers Profile => total donated, orgs donated to,
+//     level of membership, etc..
+
 
 //FIX ADDING ITEMS TO CART FROM HOME PAGE AND RENDERING IN CART DROP DOWN
 //poolprompt

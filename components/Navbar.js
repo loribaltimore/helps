@@ -13,10 +13,18 @@ import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
 function Navbar({ currentUser }) {
     let { cart } = useContext(MainContext);
     
+    
     let isAdmin = false;
     if (currentUser !== undefined
         && currentUser.admin.permissions.indexOf('admin') > -1) {
         isAdmin = true;
+    };
+
+    let router = useRouter();
+
+    let isMaster = false;
+    if (router.asPath === '/master') {
+        isMaster = true;
     };
 
     let gridW = {
@@ -24,10 +32,15 @@ function Navbar({ currentUser }) {
         false: 3
     };
 
+    let masterOffset = {
+        true: '31.5%',
+        false: '37.5%',
+    };
+
     let Router = useRouter();
     return (
         <div style={{paddingBottom: '10%'}}>
-                <nav style={{height: '4rem', backgroundColor: '#5ce1e6', marginBottom: '2%', width: '25%', borderRadius: '5rem', position: 'fixed', left: '37.5%', zIndex: '1', boxShadow: '4px 4px gray'}}>
+                <nav style={{height: '4rem', backgroundColor: '#5ce1e6', marginBottom: '2%', width: '25%', borderRadius: '5rem', position: 'fixed', left: masterOffset[isMaster], zIndex: '1', boxShadow: '4px 4px gray'}}>
                 <Grid container style={{position: 'relative', top: '.75rem', paddingLeft: '1%'}}>
                     <Grid item xs={gridW[isAdmin]} style={{textAlign: 'center'}}>
                         <Link underline="none" style={{position: 'relative', top: '.5rem', cursor: 'pointer'}} onClick={() => Router.push('/home') }>
@@ -39,7 +52,7 @@ function Navbar({ currentUser }) {
                           <ContentPasteSearchIcon style={{color: '#ff5757', fontSize: '2rem'}}/>
                         </Link>
                     </Grid>
-                            <Grid item xs={gridW[isAdmin]} style={{textAlign: 'center'}}>
+                    <Grid item xs={gridW[isAdmin]} style={{ textAlign: 'center' }}>
                         <CartBtn currentUser={currentUser} cart={cart} />
                             </Grid>
                             <Grid item xs={gridW[isAdmin]} style={{textAlign: 'center'}}>

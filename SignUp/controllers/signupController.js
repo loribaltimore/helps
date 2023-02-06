@@ -15,13 +15,14 @@ module.exports.signupPost = async (req, res, next) => {
     interests.forEach(function (element, index) {
         newUser.charities.interests.set(element, {score: 1, tags: {}})
     });
-    // console.log(newUser);
-    // await User.register(newUser, auth.password);
-    // await newUser.save();
-    // req.login(newUser, (err) => {
-    //     if (err) {
-    //         console.log(err);
-    //     }
-    // });
+    newUser.
+    console.log(newUser);
+    await User.register(newUser, auth.password);
+    await newUser.save();
+    req.login(newUser, (err) => {
+        if (err) {
+            console.log(err);
+        }
+    });
    return res.send(newUser);
 };

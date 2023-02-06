@@ -1,11 +1,16 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
+const { v4: uuidv4 } = require('uuid');
 
 module.exports.checkoutPost = async (req, res, next) => {
-    let { cart } = req.body;
+    let { cart, toPool } = req.body;
+  console.log('THIS SHOULD BE CART');
+  console.log(toPool);
+  console.log(req.headers.origin);
 
-    console.log('THIS SHOULD BE CART');
-    console.log(req.headers.origin);
+  if (!toPool) {
+    req.session.toQueueID = uuidv4();
+  };
+
       if (req.method === 'POST') {
         try {
           // Create Checkout Sessions from body params.
@@ -18,7 +23,11 @@ module.exports.checkoutPost = async (req, res, next) => {
                       }
                   }),
             mode: 'payment',
-            success_url: `${req.headers.origin}/home?success=true`,
+            success_url:
+              toPool ?
+                `${req.headers.origin}/home?success=true&toPool=${toPool}`
+                :
+                `${req.headers.origin}/home?success=true&toQueue=${req.session.toQueueID}`,
             cancel_url: `${req.headers.origin}/home?canceled=true`,
           });
           res.redirect(303, session.url);

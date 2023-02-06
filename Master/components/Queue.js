@@ -1,23 +1,26 @@
 import Pagination from '@mui/material/Pagination';
 import QueuePanel from './QueuePanel';
+import axios from 'axios';
 import { useState } from 'react';
+import getQueue from '../functions/getQueue';
 
-function Queue({ officialQueue }) {
-    let [currentQueue, setCurrentQueue] = useState(officialQueue.slice(0, 20));
+function Queue({ officialQueue, officialHistory }) {
+    let [currentQueue, setCurrentQueue] = useState(officialQueue);
     let [currentPage, setCurrentPage] = useState(1);
-    console.log(currentPage);
-    console.log(currentQueue);
-
-    let handleClick = (event) => {
+    
+    let handleClick = async (event) => {
         setCurrentPage(parseInt(event.target.innerText));
-        setCurrentQueue(officialQueue.slice(currentPage*10, (currentPage*10) + 20))
-    };
-
+        await getQueue(parseInt(event.target.innerText)).then(data => { console.log(data);  setCurrentQueue(data)}).catch(err => console.log(err));
+        window.scroll(0, 0);
+    }
     return (
         <div>
             {
                 currentQueue.map(function (element, index) {
-                    return <QueuePanel donation={element} setCurrentPage={setCurrentPage} key={index} />
+                    let historyAmt = 0;
+                    officialHistory[element.org.name] !== undefined ?
+                        historyAmt = officialHistory[element.org.name] : '';
+                    return <QueuePanel donation={element} setCurrentQueue={setCurrentQueue} currentPage={currentPage} setCurrentPage={setCurrentPage} key={index} historyAmt={historyAmt} />
             })
             }
             <Pagination count={10} color="primary" style={{cursor: 'pointer'}} onClick={(event) => handleClick(event) }/>

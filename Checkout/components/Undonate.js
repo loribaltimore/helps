@@ -1,26 +1,57 @@
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { MainContext } from '../../components/MainContext';
 import { useContext } from 'react';
-import { updateCoin } from '../../Cart/functions/updateCart';
+import { updateCoin, updatePool } from '../../Cart/functions/updateCart';
 
 function Undonate(props) {
-    let {org, handlehover, handleleave, cart} = props
-    let { setCart, setRenderPool} = useContext(MainContext);
+    let {org, cart, pool, setToPool} = props
+    let { setCart } = useContext(MainContext);
+    
+    let isEnoughCoin = cart.coin.qty > 0;
 
-    let handleClick = async () => {
-        console.log('CHARITY UN-DONATE IS CLICKED');
-        await updateCoin(cart, org.name, 2)
-            .then(data => {console.log('COIN UPDATED'); console.log(data); setCart(data)})
-            .catch(err => console.log(err));
+    cart.toDonate.length ?
+    console.log(cart.toDonate.filter(x => x.name === org.name)[0]):''
+
+    let currentCoin =
+        cart.toDonate.length && pool === false ?
+            cart.toDonate.filter(x => x.name === org.name)[0].coinTotal > 2 : true;
+    
+    let possibleCoin = {
+        true: 1,
+        false: 2
     };
 
+    let handleClick = async () => {
+        if (pool === false) {
+            console.log('CHARITY UN-DONATE IS CLICKED');
+            await updateCoin(cart, org, possibleCoin[currentCoin])
+                .then(data => {console.log('COIN UPDATED'); console.log(data); setCart(data)})
+                    .catch(err => console.log(err));
+        } else {
+            if (cart.pool > 0) {
+                await updatePool(cart, -possibleCoin[currentCoin])
+                .then(data => {
+                    {
+                        setCart(data);
+                        if (data.pool === 0) {
+                            setToPool(undefined);
+                        }
+                    }
+                }).catch(err => console.log(err));
+            }
+        }
+    };
+
+    let size = {
+        false: '3',
+        true: '2.5'
+    };
+
+
     return (
-        <div>
-            <CancelOutlinedIcon style={{ color: 'red', fontSize: '3rem', cursor: 'pointer'  }}
-            onClick={() => handleClick()}
-            onMouseEnter={() => handlehover()}
-            onMouseLeave={() => handleleave()}/>
-        </div>
+        <CancelOutlinedIcon style={{ color: 'red', fontSize: `${size[isEnoughCoin]}rem`, cursor: 'pointer', position: 'relative' }}
+                onClick={() => handleClick()}
+            />
     )
 };
 

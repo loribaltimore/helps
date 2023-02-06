@@ -4,14 +4,14 @@ let Product = require('../models/productSchema');
 let Donation = require('../models/donationSchema');
 let DonationQueue = require('../models/donationQueueSchema');
 let casual = require('casual');
-const { OutdoorGrillTwoTone } = require('@mui/icons-material');
+let axios = require('axios');
 
 mongoose.connect('mongodb://localhost:27017/helps')
     .then(console.log('Database is Live')).catch(err => console.log(err));
 
 let seedUser = async () => {
     await User.deleteMany({});
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 100; i++) {
         let newUser = await new User({
             username: `dev${i}`,
             bio: {
@@ -43,6 +43,9 @@ let seedUser = async () => {
         await newUser.save();
         console.log(newUser);
     };
+    let allUsers = await User.find({});
+    allUsers[0].username = 'dev';
+    await allUsers[0].save();
 };
 
 // seedUser();
@@ -185,47 +188,81 @@ let seedDonationQueue = async () => {
 // seedDonationQueue();
 
 let seedDonation = async () => {
+    let cause = 'climate';
+    let response = await axios({
+        method: 'get',
+        url: `https://partners.every.org/v0.2/browse/${cause}?apiKey=5650c89629828b8990f49fa4aeb665fd`,
+        params: {
+            take: '100',
+        }
+    }).then(data => { return data.data.nonprofits }).catch(err => console.log(err));
 
     let allUsers = await User.find({});
-    console.log(allUsers);
     let officialQueue = await DonationQueue.findOne({ name: 'officialQueue' });
     officialQueue.queue = [];
-    await Donation.deleteMany({});
-    let org = { name: 'TEST', ein: "1234567" };
+    
+    await officialQueue.save();
+    // await Donation.deleteMany({});
     let amt = { total: 1000, final: 950 };
-    allUsers.forEach(async (element, index) => {
-        let newDonation = await new Donation({
-            user: {
-                user_id: element.id,
-                firstName: element.bio.firstName,
-                lastName: element.bio.lastName,
-                email: element.contact.email,
-            },
-            org: {
-                name: org.name + index,
-                ein: org.ein,
-            },
-            transaction: {
-                amount: {
-                    total: amt.total,
-                    final: amt.final,
-                    // stripe_id: stripeId
-                }
-            }
-        }).save();
-       await officialQueue.addToQueue(newDonation.id);
-    });
+    // allUsers.forEach(async (element, index) => {
+    //     let rand = Math.floor(Math.random() * 100);
+    //     // console.log(rand);
+    //     // console.log(response[rand]);
+    //     let org = response[rand];
+    //     let newDonation = await new Donation({
+    //         user: {
+    //             user_id: element.id,
+    //             firstName: element.bio.firstName,
+    //             lastName: element.bio.lastName,
+    //             email: element.contact.email,
+    //         },
+    //         org: {
+    //             name: org.name,
+    //             ein: org.ein,
+    //             img: org.logoUrl
+    //         },
+    //         transaction: {
+    //             amount: {
+    //                 total: amt.total,
+    //                 final: amt.final,
+    //                 // stripe_id: stripeId
+    //             }
+    //         }
+    //     }).save();
+    //     await officialQueue.addToQueue(newDonation.id);
+    //     element.charities.donations.push(newDonation);
+    //     element.membership.totalDonations += amt.final;
+    //     await element.save();
+        
+    // });
     console.log('ALL DONATIONS');
-    console.log(officialQueue.queue.length);
+    console.log(officialQueue.history);
 };
 
-seedDonation();
+// seedDonation();
 
 let test = async () => {
     let currentUser = await User.findOne({ username: 'dev' });
-    console.log(currentUser.charities);
+    currentUser.charities.donations = [];
+    currentUser.membership.totalDonations = 0;
+    console.log(currentUser.charities.donations);
+    // currentUser.charities.liked.orgs.shift();
+//    currentUser.charities.liked.orgs.unshift({
+//     description: "the helps Pool will take all user donations and make on large donation to an organization voted on by each user.",
+//     name: "helps Pool",
+//     profileUrl: 'https://www.every.org/lilbubsbigfund',
+//     logoUrl: 'https://res.cloudinary.com/demgmfow6/image/upload/c_lfill,w_25,h_25,dpr_2/c_crop,ar_25:25/q_auto,f_auto,fl_progressive/v1671644999/helps/vggmorzngbqcniaejrrt.jpg',
+//     coverImageUrl: 'https://res.cloudinary.com/demgmfow6/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1671562550/helps/ftbgr37eg2nqtv0ydbej.jpg',
+//     matchedTerms: [],
+//     slug: 'helpspool',
+//     location: 'BELLEVUE, WA',
+//     tags: [],
+//     sort: 0,
+//   })
+    // currentUser.admin.permissions.push('admin');
+    await currentUser.save();
 };
 
-// test();
+test();
 
 

@@ -3,6 +3,7 @@ import { MainContext } from '../../components/MainContext';
 import { useContext, useState } from 'react';
 import getSession from '../../functions/getSession';
 import CartDropdown from './CartDropdown';
+import Badge from '@mui/material/Badge';
 
 function CartBtn({currentUser, cart}) {
     let [isCart, setIsCart] = useState(false);
@@ -19,8 +20,14 @@ function CartBtn({currentUser, cart}) {
     
     return (
         <div style={{ zIndex: '100' }}>
-            <ShoppingCartOutlinedIcon onClick={async () => await handleClick()} style={{position: 'relative', top: '.5rem', fontSize: '2rem', color: '#ff5757', marginBottom: '1rem'}}/>
-         
+            {
+                cart !== undefined ?
+                    <Badge badgeContent={cart.items.length} color="secondary">
+                        <ShoppingCartOutlinedIcon onClick={async () => await handleClick()} style={{ position: 'relative', top: '.5rem', fontSize: '2rem', color: '#ff5757', marginBottom: '1rem', cursor: 'pointer' }} />
+                    </Badge> :
+                    <ShoppingCartOutlinedIcon onClick={async () => await handleClick()} style={{ position: 'relative', top: '.5rem', fontSize: '2rem', color: '#ff5757', marginBottom: '1rem', cursor: 'pointer' }} />
+            }
+
             {
                 isCart === true ?
                     <CartDropdown cart={cart} isFinalStep={false} currentUser={currentUser}/> : ''

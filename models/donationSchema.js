@@ -27,7 +27,12 @@ let donationSchema = new Schema([{
         },
         ein: {
             type: String,
-            required: true
+        },
+        slug: {
+            type: String,
+        },
+        img: {
+            type: String
         }
     },
     transaction: {
@@ -60,8 +65,9 @@ let donationSchema = new Schema([{
     
     sort: {
         type: Number,
-        defualt: 0
-    }
+        default: 0
+    },
+    
 }]);
 
 let Donation = model('donation', donationSchema);

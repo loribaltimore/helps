@@ -81,7 +81,6 @@ app.prepare().then(() => {
     passport.deserializeUser(User.deserializeUser());
 
 
-
     //Custom Middleware
     let errHandler = require('./middleware/errorHandling');
     let { getLanding } = require('./controllers/landing');
@@ -98,6 +97,8 @@ app.prepare().then(() => {
     let { checkoutPost } = require('./Cart/controllers/cartControllers');
     let addToQueue = require('./Checkout/functions/addToQueue');
     let addToPool = require('./Checkout/functions/addToPool')
+    let addToHistory = require('./Master/functions/addToHistory');
+    let { queueGet } = require('./Master/controllers/queueControllers');
 
     //Routes
     server.get('/', async (req, res, next) => {
@@ -106,17 +107,40 @@ app.prepare().then(() => {
         return app.render(req, res, '/landing', {queue});
     });
 
+
     server.get('/home', async (req, res, next) => {
         // console.log(req.sessionID);
         // console.log(MemoryStore.get(req.sessionID));
-        let { success } = req.query;
+        let { success, toPool, toQueue } = req.query;
+        let { toQueueID, toPoolID } = req.session;
+        console.log(toPoolID);
+        console.log(req.query);
         if (Object.keys(req.query).length > 0) {
             req.session.flash = {};
             if (success !== undefined) {
                 req.flash('success', 'Purchase Successful!'); 
-                await addToQueue(cart).then(data => { return data }).catch(err => console.log(err));
+                if (toQueue !== undefined && toQueue === toQueueID) {
+                    await addToQueue(req.session.cart)
+                        .then(data => { return data }).catch(err => console.log(err));
+                    let currentUser = await User.findById(req.user._id);
+                    req.session.cart.toDonate.forEach(function (element, index) {
+                        currentUser.charities.donations.push(element);
+                    });
+                    await currentUser.save();
+                    req.session.toQueue = {};
+                    req.session.cart = {};
+                } else if (toPool !== undefined && toPool === toPoolID) {
+                    await addToPool(req.session.cart)
+                    .then(data => { console.log(data); return data }).catch(err => console.log(err));
+                    let currentQueue = await DonationQueue.findOne({ name: 'officialQueue' });
+                    console.log(currentQueue.pool);
+                    req.session.toPool = {};
+                    req.session.cart = {};
+                } else {
+                    throw new Error('THIS IS WRONG', 404);
+                }
             } else {
-                req.flash('error', 'Purchase Successful!');
+                req.flash('error', 'Purchase Cancelled!');
             }
         };
         app.render(req, res, '/homePage', {});
@@ -148,12 +172,31 @@ app.prepare().then(() => {
        return app.render(req, res, '/userRecommended', {allRecs, interestsByName});
     });
 
-    server.get('/master', async (req, res, next) => {
+    server.get('/master', async (req, res, next) => {  
+        let start = Date.now();
+        let { isSuccess } = req.query;
+        console.log(req.session);
+        console.log('THIS IS isSuccess');
+        console.log(isSuccess);
+        isSuccess === 'true' ?
+            await addToHistory(req.session.currentDonation) : '';
+        let queuePop = [];
         let officialQueue = await DonationQueue.findOne({ name: 'officialQueue' })
             .then(data => { return data }).catch(err => console.log(err));
-        let queuePop = await officialQueue.populate('queue')
-            .then(data => { return data.queue }).catch(err => console.log(err));
-        app.render(req, res, '/masterPage', { officialQueue: queuePop })
+        officialQueue.queue.slice(0, 20).forEach(async (element, index) => {
+            let currentDonation = await Donation.findById(element.toString())
+                .then(data => { return data }).catch(err => console.log(err));
+            queuePop.push(currentDonation);
+        });
+        console.log('THIS IS QUEUEPOP');
+        console.log(queuePop);
+        // let queuePop = await officialQueue.populate('queue')
+        //     .then(data => { return data }).catch(err => console.log(err));
+        let stop = Date.now();
+        console.log(stop - start);
+        let officialHistory = Object.fromEntries(officialQueue.history);
+
+        app.render(req, res, '/masterPage', { officialQueue: queuePop, officialHistory })
     });
 
     server.get('/dashboard', async (req, res, next) => {
@@ -186,6 +229,8 @@ app.prepare().then(() => {
     });
     server.post('/checkout', checkoutPost);
     server.post('/pool', addToPool);
+    server.put('/addToHistory', addToHistory);
+    server.get('/queue', queueGet);
     
     // const endpointSecret = "whsec_a5052c84697a6daa5e024df66ecf25fdaf1aa7e84389d16bb6ff04ea69b0eb32";
     server.post('/webhook', express.raw({ type: 'application/json' }), async (req, res, next) => {

@@ -109,7 +109,20 @@ let userSchema = new Schema({
         liked: {
             orgs: {
                 type: Array,
-                default: []
+                default: [
+                        {
+                            description: "the helps Pool will take all user donations and make on large donation to an organization voted on by each user.",
+                            name: "helps Pool",
+                            profileUrl: 'https://www.every.org/lilbubsbigfund',
+                            logoUrl: 'https://res.cloudinary.com/demgmfow6/image/upload/c_lfill,w_25,h_25,dpr_2/c_crop,ar_25:25/q_auto,f_auto,fl_progressive/v1671644999/helps/vggmorzngbqcniaejrrt.jpg',
+                            coverImageUrl: 'https://res.cloudinary.com/demgmfow6/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1671562550/helps/ftbgr37eg2nqtv0ydbej.jpg',
+                            matchedTerms: [],
+                            slug: 'helpspool',
+                            location: 'BELLEVUE, WA',
+                            tags: [],
+                            sort: 0,
+                          }
+                ]
             },
             tags: {
                 type: Map,
@@ -118,18 +131,8 @@ let userSchema = new Schema({
             }
         },
         donations: {
-            coin: {
-                type: Number,
-                default: 0
-            },
-            orgs: {
-                type: Array,
-                default: []
-            },
-            total: {
-                type: Number,
-                default: 0
-            }
+            type: Array,
+            default: []
         }
     }
 });

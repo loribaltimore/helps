@@ -5,19 +5,22 @@ import { useContext } from 'react';
 import MembershipTier from '../Dashboard/components/MembershipTier';
 
 
-function Dashboard(props) {
-    let { currentUser } = useContext(MainContext);
-
+function Dashboard({currentUser}) {
+    console.log(currentUser);
     return (
         <div style={{ border: '1px solid black' }}>
             <h1>Dashboard</h1>
-            <CoinTotal />
-            <DonatedTo />
+            <CoinTotal currentUser={currentUser}/>
+            <DonatedTo currentUser={currentUser} />
             {/* <MembershipTier /> */}
-
         </div>
     )
 
+};
+
+Dashboard.getInitialProps = async (ctxt) => {
+    let { req } = ctxt;
+    return {currentUser: req.user}
 };
 
 

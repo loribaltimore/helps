@@ -11,11 +11,11 @@ import { useRouter } from 'next/router'
 import CheckoutBtn from '../../Checkout/components/CheckoutBtn';
 import DonateBtn from '../../Checkout/components/DonateBtn';
 import CartTotal from './CartTotal';
-import PoolPrompt from '../../Checkout/components/PoolPrompt';
+// import PoolPrompt from '../../Checkout/components/PoolPrompt';
 
 
 
-function CartDropdown({ isFinalStep, currentUser }) {
+function CartDropdown({ isFinalStep, currentUser, toPool, setOpen }) {
   let { setCart, cart } = useContext(MainContext);
   
 
@@ -50,15 +50,12 @@ function CartDropdown({ isFinalStep, currentUser }) {
                       <ListItemText primary={element.name} secondary={`x ${element.qty}`}/>
                     </ListItem>
                   </Grid>
-                  {
-                    element.name !== 'Coin' ?
                     <Grid item xs={5}>
                     <ListItem >
                       <Button variant="outlined" onClick={() => handleClick('add', element)}>Add</Button>
                       <Button variant="outlined" onClick={() => handleClick('remove', element)}>Remove</Button>
                     </ListItem>
-                  </Grid> : ''
-                  }
+                  </Grid> 
                 </Grid>
                       <Divider />
               </div>
@@ -76,12 +73,6 @@ function CartDropdown({ isFinalStep, currentUser }) {
             :
             <CartTotal cart={undefined} />
         }
-
-        {
-          cart !== undefined && cart.coin.qty === 1 ?
-            <PoolPrompt />
-            : ''
-        }
         
         {
           isFinalStep === false ?
@@ -90,9 +81,9 @@ function CartDropdown({ isFinalStep, currentUser }) {
               <DonateBtn /> : ''
             :
             cart !== undefined  && cart.coin.qty === 0?
-              <CheckoutBtn canCheckout={true} />
+              <CheckoutBtn canCheckout={true} toPool={toPool} />
               :
-              <CheckoutBtn canCheckout={false} />
+              <CheckoutBtn canCheckout={false} setOpen={setOpen}/>
       }
       </List>
     </div>

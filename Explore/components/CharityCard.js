@@ -8,11 +8,14 @@ import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import Undonate from '../../Checkout/components/Undonate';
 import { MainContext } from '../../components/MainContext';
 import { useContext, useState } from 'react';
+import AddDonation from '../../Checkout/components/AddDonation';
+import CharityPool from '../../checkout/components/CharityPool';
+import { queue } from 'sharp';
 
 function CharityCard(props) {
-    let { org, cardType, liked, cart} = props;
+    let { org, cardType, liked, cart, setOpen, setCart, setToPool, total} = props;
     let [isHover, setIsHover] = useState(false);
-    
+    console.log(cardType)
 
     let styles = {
         like: {
@@ -22,6 +25,14 @@ function CharityCard(props) {
         donate: {
             true: 'goldenrod',
             false: 'white'
+        },
+        pool: {
+            true: 'lightblue',
+            false: 'white'
+        },
+        dashboard: {
+            true: 'white',
+            false: 'white'
         }
     };
 
@@ -30,17 +41,30 @@ function CharityCard(props) {
     }
     let handleleave = () => {
         setIsHover(false);
-    }
+    };
+
+    console.log(liked);
 
     let icons = {
         like: {
-            false: <FavoriteOutlinedIcon style={{ color: 'red', fontSize: '3rem', cursor: 'pointer' }} onMouseEnter={() => handlehover()} onMouseLeave={() => handleleave()}/>,
+            false: <FavoriteOutlinedIcon style={{ color: 'red', fontSize: '3rem', cursor: 'pointer' }} />,
             true: <CharityUnlike org={org} handlehover={handlehover} handleleave={handleleave} />    
         },
         donate: {
-            false: <TaskAltIcon style={{color: 'green', fontSize: '3rem', cursor: 'pointer' }} onMouseEnter={() => handlehover()} onMouseLeave={() => handleleave()}/>,
-            true: <Undonate org={org} handlehover={handlehover} handleleave={handleleave} cart={cart}/>
-        }
+            false: <TaskAltIcon style={{color: 'green', fontSize: '3rem', cursor: 'pointer' }} />,
+            true: [
+                <Undonate org={org} cart={cart} pool={false} />,
+                cart !== undefined && cart.coin.qty > 0 ?
+                    <AddDonation org={org} cart={cart} setCart={setCart} pool={false} />: ''
+            ]
+        },
+        pool: {
+            false: <TaskAltIcon style={{color: 'green', fontSize: '3rem', cursor: 'pointer' }}/>,
+true: [
+    <Undonate org={org} cart={cart} pool={true} setToPool={setToPool} />,
+               cart !== undefined && cart.coin.qty > 0 ?
+                    <AddDonation org={org} cart={cart} setCart={setCart} pool={true}/>: ''
+            ]        }
     };
 
     
@@ -68,13 +92,20 @@ function CharityCard(props) {
                     <a href={org.profileUrl} style={{paddingLeft: '7.5%', paddingRight: '7.5%', paddingTop: '0%', margin: '0%' }}>{org.profileUrl}</a>
                 </Grid>
                 <Grid item xs={12} style={{height: '10%'}}>
-                <div style={{position: 'relative', left: '80%', width: '3rem'}}>
+                <div style={{position: 'relative', left: '78%', width: '6rem'}} onMouseEnter={() => handlehover()} onMouseLeave={() => handleleave()}>
                     {   liked !== true && cardType !== undefined ?
                         cardType === 'donate' ?
-                                <CharityDonate org={org} cart={cart}/>
+                                <CharityDonate org={org} cart={cart} setOpen={setOpen} />
                                 :
+                                cardType === 'pool' ?
+                                    <CharityPool setToPool={setToPool} cart={cart} setCart={setCart} setOpen={setOpen} />
+                                    :
+                                    cardType === 'dashboard' ?
+                                        <h1 style={{ color: 'green', fontSize: '3rem'}}>{`$${total}`}</h1>
+                                        :
                                 <CharityLike org={org}  />
                             : icons[cardType][isHover]
+
                         }
                         </div>
                 </Grid>
@@ -85,3 +116,7 @@ function CharityCard(props) {
 };
 
 export default CharityCard;
+
+configure charity card in dashboard 
+do purchases update all relevant resources ?
+    add merchandise to queuePanel so i can do donation and merch at same time
