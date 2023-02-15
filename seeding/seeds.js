@@ -3,6 +3,8 @@ const User = require('../models/userSchema');
 let Product = require('../models/productSchema');
 let Donation = require('../models/donationSchema');
 let DonationQueue = require('../models/donationQueueSchema');
+let Purchase = require('../models/purchaseSchema');
+
 let casual = require('casual');
 let axios = require('axios');
 
@@ -242,10 +244,29 @@ let seedDonation = async () => {
 // seedDonation();
 
 let test = async () => {
-    let currentUser = await User.findOne({ username: 'dev' });
-    currentUser.charities.donations = [];
-    currentUser.membership.totalDonations = 0;
-    console.log(currentUser.charities.donations);
+    
+    let q = await DonationQueue.findOne({ name: 'officialQueue' })
+        .then(data => { return data }).catch(err => console.log(err));
+    
+    q.queue = [];
+    await q.save();
+    
+    // q.pool.delete('63e15e81f5efbe2cbba9e820');
+    // await q.save();
+    // let id = q.queue[0].toString();
+    // let currentDonation = await Donation.findById(id);
+    // console.log(currentDonation.transaction.items[0]);
+    // await currentDonation.save();
+    // q.queue = [];
+    // await q.save();
+    // allDonations.forEach(async (element, index) => {
+    //     element.transaction.fulfilled = false;
+    //     await element.save();
+    // });
+    // let currentUser = await User.findOne({ username: 'dev' });
+    // currentUser.charities.donations = [];
+    // currentUser.membership.totalDonations = 0;
+    // console.log(currentUser.charities.donations);
     // currentUser.charities.liked.orgs.shift();
 //    currentUser.charities.liked.orgs.unshift({
 //     description: "the helps Pool will take all user donations and make on large donation to an organization voted on by each user.",
@@ -260,9 +281,42 @@ let test = async () => {
 //     sort: 0,
 //   })
     // currentUser.admin.permissions.push('admin');
-    await currentUser.save();
+    // await currentUser.save();
+};
+test();
+// 
+let seedPurchases = async () => {
+  
+    // let currentUser = await User.findOne({ name: 'dev' });
+    // let shirt = await Product.findOne({ name: 'Classic T-Shirt' });
+    // for (let i = 0; i < 3; i++) {
+    //     let sizes = ['s', 'm', 'l', 'xl'];
+    //     let newPurchase = await new Purchase({
+    //         user: currentUser.id,
+    //         items: [
+    //             {
+    //                 id: shirt.id,
+    //                 name: shirt.name,
+    //                 qty: i + 1,
+    //                 size: sizes[i]
+    //             }
+    //         ],
+    //         address: {
+    //             num: currentUser.address.shipping.num,
+    //             street: currentUser.address.shipping.street,
+    //             city: currentUser.address.shipping.city,
+    //             state: currentUser.address.shipping.state,
+    //             country: 'USA'
+    //         },
+    //         orgs: [
+    //             'Example Charity'
+    //         ]
+    //     }).save();
+    //     currentUser.purchases.push(newPurchase.id);
+    //     await currentUser.save();
+    // };
+    // console.log(currentUser.purchases);
+   
 };
 
-test();
-
-
+// seedPurchases();

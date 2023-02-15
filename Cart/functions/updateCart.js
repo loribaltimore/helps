@@ -4,28 +4,28 @@ let updateSession = require('../../functions/updateSession');
 let {createCart, CartItem} = require('./createCart.js');
 
 module.exports.addToCart = async (currentUser, cart, item, coin) => {
-    let { name, price, img, code, qty } = item;
+    let { name, price, img, code, config} = item;
 
     if (cart === undefined) {
         cart = await createCart(currentUser, item, coin).then(data => { return data }).catch(err => console.log(err));
         cart.coin = { code: coin.code, qty: ((cart.total / 2) / 5)};
         return cart;
     } else {
-        console.log('THIS IS QTY', qty)
-        qty === undefined ?
-            qty = 1 : qty = qty;
+        console.log('THIS IS QTY', config.qty)
+        config === undefined ?
+            config = {qty: 1} : config = config;
         let newItem = undefined;
         let cartItems = cart.items.map(x => x.name);
         if (cartItems.indexOf(name) === -1) {
-            newItem = new CartItem(name, price, qty, img[0].path, code);
+            newItem = new CartItem(name, price, config, img[0].path, code);
             cart.items.push(newItem);  
         } else {
             console.log('THIS IS QTY');
-            console.log(qty);
-            cart.items[cartItems.indexOf(name)].qty
+            console.log(config.qty);
+            cart.items[cartItems.indexOf(name)].config.qty
                 +=
                 name !== 'Coin' ?
-                    1 : qty;
+                    1 : config.qty;
         };
 
         if (name !== 'Coin') {
@@ -48,7 +48,7 @@ module.exports.removeFromCart = async (cart, item) => {
     // }
     let cartItems = cart.items.map(x => x.name);
     let currentItem = cart.items[cartItems.indexOf(item.name)]
-    currentItem.qty -= 1;
+    currentItem.config.qty -= 1;
     cart.total -= item.price;
     if (item.name === 'Coin') {
         cart.coin.qty = Math.abs(cart.coin.qty - 1);
@@ -59,7 +59,7 @@ module.exports.removeFromCart = async (cart, item) => {
         cart.coin.qty -= ((item.price / 2) / 5);
     };
     
-    if (currentItem.qty === 0) {
+    if (currentItem.config.qty === 0) {
         currentItem.sort = 1;
         cart.items.sort(function (a, b) {
             return a.sort - b.sort

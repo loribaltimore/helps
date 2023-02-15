@@ -7,8 +7,7 @@ import { MainContext } from '../components/MainContext';
 import { useContext, useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Flash from '../components/Flash';
-import PoolPrompt from '../Checkout/components/PoolPrompt';
-
+import ItemConfiguration from '../Home/components/ItemConfiguration';
 
 function Home({user, products, flash}) {
     let [productsAndInteractionsMixed, setProductsAndInteractionsMixed ] = useState(undefined)

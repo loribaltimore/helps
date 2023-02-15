@@ -41,15 +41,35 @@ function CartDropdown({ isFinalStep, currentUser, toPool, setOpen }) {
               <div>
                 <Grid container>
                   <Grid item xs={3}>
+                   
                     <ListItem >
-                      <img src={element.img} style={{width: '90%', height: 'inherit'}}/>
-                    </ListItem>
+                      <img src={element.img} style={{ width: '90%', height: 'inherit' }} />
+                      </ListItem>
+                      <ListItem style={{height: '1rem'}}>
+                      {
+                            element.config.colors.map(function (element, index) {
+                              return <div
+                                style={{ height: '1rem', width: '1rem', backgroundColor: element }}>
+                                </div>
+                            
+                            })
+                      }
+                      <div style={{width: '.5rem'}}></div>
+                      {
+                        element.config.size ?
+                        <h5 style={{width: '1rem', height: '1rem', textAlign: 'center', border: '1px black solid', borderRadius: '50%'}}>{element.config.size}</h5>
+                           : ''
+                      }
+                      </ListItem>
+                    
                   </Grid>
-                  <Grid item xs={4}>
-                    <ListItem >
-                      <ListItemText primary={element.name} secondary={`x ${element.qty}`}/>
-                    </ListItem>
-                  </Grid>
+                  
+                      <Grid item xs={4}>
+                          <ListItem >
+                          <ListItemText primary={element.name} secondary={`x ${element.config.qty}`}/>
+                        </ListItem>
+                      </Grid>
+                   
                     <Grid item xs={5}>
                     <ListItem >
                       <Button variant="outlined" onClick={() => handleClick('add', element)}>Add</Button>

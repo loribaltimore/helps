@@ -35,7 +35,8 @@ app.prepare().then(() => {
     let Product = require('./models/productSchema');
     let Donation = require('./models/donationSchema');
     let DonationQueue = require('./models/donationQueueSchema');
-    let myCache = require('./util/myCache');
+    let Purchase = require('./models/purchaseSchema');
+    // let myCache = require('./util/myCache');
 
     //Required Packages
     let bodyParser = require('body-parser');
@@ -98,7 +99,7 @@ app.prepare().then(() => {
     let addToQueue = require('./Checkout/functions/addToQueue');
     let addToPool = require('./Checkout/functions/addToPool')
     let addToHistory = require('./Master/functions/addToHistory');
-    let { queueGet } = require('./Master/controllers/queueControllers');
+    let { queueGet, queuePost } = require('./Master/controllers/queueControllers');
 
     //Routes
     server.get('/', async (req, res, next) => {
@@ -121,12 +122,7 @@ app.prepare().then(() => {
                 req.flash('success', 'Purchase Successful!'); 
                 if (toQueue !== undefined && toQueue === toQueueID) {
                     await addToQueue(req.session.cart)
-                        .then(data => { return data }).catch(err => console.log(err));
-                    let currentUser = await User.findById(req.user._id);
-                    req.session.cart.toDonate.forEach(function (element, index) {
-                        currentUser.charities.donations.push(element);
-                    });
-                    await currentUser.save();
+                        .then(data => { return data }).catch(err => console.log(err));                    
                     req.session.toQueue = {};
                     req.session.cart = {};
                 } else if (toPool !== undefined && toPool === toPoolID) {
@@ -230,7 +226,9 @@ app.prepare().then(() => {
     server.post('/checkout', checkoutPost);
     server.post('/pool', addToPool);
     server.put('/addToHistory', addToHistory);
+
     server.get('/queue', queueGet);
+    server.post('/queue', queuePost);
     
     // const endpointSecret = "whsec_a5052c84697a6daa5e024df66ecf25fdaf1aa7e84389d16bb6ff04ea69b0eb32";
     server.post('/webhook', express.raw({ type: 'application/json' }), async (req, res, next) => {

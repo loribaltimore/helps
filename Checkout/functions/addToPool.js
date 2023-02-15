@@ -9,6 +9,8 @@ let Product = mongoose.model('product', productSchema);
 
 let addToPool = async (cart) => {
     let officialQueue = await DonationQueue.findOne({ name: 'officialQueue' });
+    currentUser = await User.findById(cart.currentUser._id);
+    await currentUser.addDontion(cart.pool, cart.currentUser._id);
     await officialQueue.addToPool(cart.pool,
         cart.currentUser.bio.firstName + ' ' + cart.currentUser.bio.lastName, cart.currentUser._id);
     return cart;

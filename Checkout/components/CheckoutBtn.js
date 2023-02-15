@@ -32,7 +32,7 @@ export default function CheckoutBtn({canCheckout, toPool, setOpen}) {
       <form action="/checkout" method="POST">
         {
           cart.items.map(function (element, index) {
-            return <input name={`cart[]`} defaultValue={element.code + ':' + element.qty} key={index} hidden/>
+            return <input name={`cart[]`} defaultValue={element.code + ':' + element.config.qty} key={index} hidden/>
           })
           }
           <input name="toPool" value={toPool} hidden/>

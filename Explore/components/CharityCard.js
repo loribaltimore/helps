@@ -10,7 +10,6 @@ import { MainContext } from '../../components/MainContext';
 import { useContext, useState } from 'react';
 import AddDonation from '../../Checkout/components/AddDonation';
 import CharityPool from '../../checkout/components/CharityPool';
-import { queue } from 'sharp';
 
 function CharityCard(props) {
     let { org, cardType, liked, cart, setOpen, setCart, setToPool, total} = props;
@@ -101,7 +100,7 @@ true: [
                                     <CharityPool setToPool={setToPool} cart={cart} setCart={setCart} setOpen={setOpen} />
                                     :
                                     cardType === 'dashboard' ?
-                                        <h1 style={{ color: 'green', fontSize: '3rem'}}>{`$${total}`}</h1>
+                                        <h1 style={{ color: 'green', fontSize: '3rem', margin: '0%'}}>{`$${total}`}</h1>
                                         :
                                 <CharityLike org={org}  />
                             : icons[cardType][isHover]
@@ -117,6 +116,6 @@ true: [
 
 export default CharityCard;
 
-configure charity card in dashboard 
-do purchases update all relevant resources ?
-    add merchandise to queuePanel so i can do donation and merch at same time
+// configure charity card in dashboard 
+// do purchases update all relevant resources ?
+//     add merchandise to queuePanel so i can do donation and merch at same time

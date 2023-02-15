@@ -10,7 +10,7 @@ function Dashboard({currentUser}) {
     return (
         <div style={{ border: '1px solid black' }}>
             <h1>Dashboard</h1>
-            <CoinTotal currentUser={currentUser}/>
+            <CoinTotal currentUser={currentUser}  />
             <DonatedTo currentUser={currentUser} />
             {/* <MembershipTier /> */}
         </div>

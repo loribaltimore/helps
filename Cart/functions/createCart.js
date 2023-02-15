@@ -1,5 +1,6 @@
 const axios = require("axios");
 let updateSession = require('../../functions/updateSession');
+let { v4: uuidv4  } = require('uuid');
 
 class CartBuilder{
     constructor(currentUser, items, total, coin, toDonate = [],  pool = 0) {
@@ -29,16 +30,19 @@ class CartBuilder{
 };
 
 class CartItem {
-    constructor(name, price, qty, img, code, sort = 0,) {
+    constructor(name, price, config, img, code, sort = 0, id = uuidv4(), receiptNo = 'N/A', orderedFrom = 'N/A', ) {
         this.name = name;
         this.price = price;
-        this.qty = qty;
+        this.config = config;
         this.img = img;
         this.code = code;
-        this.sort = sort
+        this.sort = sort;
+        this.id = id;
+        this.receiptNo = receiptNo;
+        this.orderedFrom = orderedFrom;
     };
     add() {
-        this.qty += 1;
+        this.config.qty += 1;
     };
     sort() {
         this.sort = 1;
@@ -47,8 +51,8 @@ class CartItem {
 
 
 let createCart = async (currentUser, item, onlyCoin) => {
-    let { name, price, img, code } = item;
-    let newItem = new CartItem(name, price, 1, img[0].path, code);
+    let { name, price, img, code, config } = item;
+    let newItem = new CartItem(name, price, config, img[0].path, code);
     let newCart = new CartBuilder(currentUser, [newItem], newItem.price, { code: onlyCoin.code, qty: (newItem.price / 2) / 5 });
    let response = await updateSession('cart', newCart)
         .then(data => { return data }).catch(err => console.log(err));

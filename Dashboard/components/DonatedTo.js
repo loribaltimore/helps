@@ -17,11 +17,11 @@ function DonatedTo({currentUser}) {
                             currentUser.charities.donations.map(function (element, index) {
                                 if (index % 2 === 0) {
                                     return <Grid item xs={6} style={{ marginBottom: '5rem' }} key={index}>
-                                        <CharityCard org={element} cardType={'dashboard'} total={element.coinTotal * 5} />
+                                        <CharityCard org={element} cardType={'dashboard'} total={element.coinTotal * 5} liked={false} />
                                         </Grid>
                                 } else {
                                     return <Grid item xs={6} style={{ position: 'relative', top: '15rem' }} key={index}>
-                                        <CharityCard org={element} cardType={'dashboard'} total={element.coinTotal * 5} />
+                                        <CharityCard org={element} cardType={'dashboard'} total={element.coinTotal * 5} liked={false}/>
                                 </Grid> 
                                 }
                             })

@@ -10,9 +10,10 @@ function Queue({ officialQueue, officialHistory }) {
     
     let handleClick = async (event) => {
         setCurrentPage(parseInt(event.target.innerText));
-        await getQueue(parseInt(event.target.innerText)).then(data => { console.log(data);  setCurrentQueue(data)}).catch(err => console.log(err));
+        await getQueue(parseInt(event.target.innerText)).then(data => { console.log(data); setCurrentQueue(data) }).catch(err => console.log(err));
         window.scroll(0, 0);
-    }
+    };
+    
     return (
         <div>
             {

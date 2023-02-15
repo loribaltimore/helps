@@ -91,8 +91,8 @@ let userSchema = new Schema({
         tier: {
             type: String,
             required: true,
-            enum: ['low', 'middle', 'top'],
-            default: 'low'
+            enum: ['bottom', 'low', 'middle', 'top'],
+            default: 'bottom'
         },
         totalDonations: {
             type: Number,
@@ -100,6 +100,12 @@ let userSchema = new Schema({
             default: 0
         }
     },
+    purchases: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'purchase'
+        }
+    ],
     charities: {
         interests: {
             type: Map,
@@ -179,11 +185,6 @@ userSchema.virtual('sortedInterests').get(function () {
 })
 
 //User Methods ------------------
-userSchema.method('addDonation').get(async (val) => {
-    this.membership.totalDonations += val;
-    await this.save();
-}, this);
-
 userSchema.method('changeTier').get(async () => {
     let { tier } = this.membership;
     switch (tier) {
@@ -199,6 +200,22 @@ userSchema.method('changeTier').get(async () => {
     };
     await this.save();
 }, this);
+
+userSchema.method('addDonation', async (val, id) => {
+    let currentUser = await User.findById(id);
+    if (((currentUser.membership.totalDonations + val)) * 5 >= 250) {
+        currentUser.membership.tier ='top'
+    } else if (((currentUser.membership.totalDonations + val) * 5) >= 150 ) {
+        currentUser.membership.tier = 'middle';
+    } else if (((currentUser.membership.totalDonations + val) * 5) >= 50) {
+        currentUser.membership.tier = 'low';
+    };
+    console.log(currentUser.membership.totalDonations);
+    currentUser.membership.totalDonations += val;
+    await currentUser.save();
+    console.log(currentUser.membership.tier);
+});
+
 
 //Edit Profile Methods
 userSchema.method('changePhone').get(async (val) => {

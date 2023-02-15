@@ -6,9 +6,11 @@ let addToHistory = async (currentDonation) => {
     console.log(currentDonation);
     let { org, transaction } = currentDonation;
     let officialQueue = await DonationQueue.findOne({ name: 'officialQueue' });
-    let queue = await officialQueue.addToHistory(org.name, transaction.amount.final);
-    let updatedQueue = await officialQueue.removeFromQueue(currentDonation._id)
-        .then(data => { return data }).catch(err => console.log(err));
+    await officialQueue.addToHistory(org.name, transaction.amount.final);
+    await officialQueue.fulfillDonation(currentDonation._id);
 };
 
 module.exports = addToHistory;
+
+
+//working on getting fulfilled orders to go to bottom of queue ;;;;;;;;;;

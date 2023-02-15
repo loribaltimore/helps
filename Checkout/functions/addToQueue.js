@@ -3,13 +3,18 @@ let Donation = require('../../models/donationSchema');
 let User = require('../../models/userSchema');
 
 let addToQueue = async (cart) => {
-    let { toDonate, currentUser } = cart;
+    let { toDonate, currentUser, items } = cart;
+    console.log('THIS IS ITEMS');
+    console.log(items);
     let user = await User.findById(currentUser._id);
     let officialQueue = await DonationQueue.findOne({ name: 'officialQueue' })
         .then(data => { return data }).catch(err => console.log(err));
     toDonate.forEach(async (element, index) => {
         let { ein, slug } = element;
-        user.membership.totalDonations += element.coinTotal;
+        user.charities.donations.push(element);
+        
+        user.addDonation(element.coinTotal, currentUser._id);
+        
         let newDonation = await new Donation({
             user: {
                 user_id: currentUser.id,
@@ -31,12 +36,15 @@ let addToQueue = async (cart) => {
                 amount: {
                     total: element.coinTotal,
                     final: element.coinTotal,
-                    // stripe_id: stripeId
-                }
+                   
+                },
+                items: items,
+                shipTo: currentUser.address.shipping
             }
         }).save();
+        console.log('THIS IS THE DONATION');
         console.log(newDonation);
-        await user.charities.donations.push(newDonation);
+        user.charities.donations.push(newDonation);
         await officialQueue.addToQueue(newDonation.id);
     });
     await user.save();
