@@ -76,6 +76,8 @@ donationQueueSchema.method('fulfillOrder', async (donationId, receiptNo, ordered
             return { name, price, config, img, code, sort, id }
         }
     });
+    currentDonation.fulfillment.order.allReceipts.push(receiptNo);
+    currentDonation.fulfillment.order.allOrderedFrom.push(orderedFrom);
 
     let isFulfilled = currentDonation.transaction.items.filter(x => x.receiptNo === 'N/A').length === 0;
     if (isFulfilled === true) {

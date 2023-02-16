@@ -96,6 +96,16 @@ let donationSchema = new Schema([{
                 type: Boolean,
                 default: false
             },
+            allReceipts: [
+                {
+                    type: String
+                }
+            ],
+            allOrderedFrom: [
+                {
+                    type: String
+                }
+            ]
         }
     },
     donation_id: {

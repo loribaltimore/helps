@@ -3,6 +3,8 @@ import QueuePanel from './QueuePanel';
 import axios from 'axios';
 import { useState } from 'react';
 import getQueue from '../functions/getQueue';
+import QueueSearch from './QueueSearch';
+
 
 function Queue({ officialQueue, officialHistory }) {
     let [currentQueue, setCurrentQueue] = useState(officialQueue);
@@ -16,6 +18,7 @@ function Queue({ officialQueue, officialHistory }) {
     
     return (
         <div>
+            <QueueSearch setCurrentQueue={setCurrentQueue}/>
             {
                 currentQueue.map(function (element, index) {
                     let historyAmt = 0;

@@ -204,58 +204,78 @@ let seedDonation = async () => {
     officialQueue.queue = [];
     
     await officialQueue.save();
-    // await Donation.deleteMany({});
-    let amt = { total: 1000, final: 950 };
-    // allUsers.forEach(async (element, index) => {
-    //     let rand = Math.floor(Math.random() * 100);
-    //     // console.log(rand);
-    //     // console.log(response[rand]);
-    //     let org = response[rand];
-    //     let newDonation = await new Donation({
-    //         user: {
-    //             user_id: element.id,
-    //             firstName: element.bio.firstName,
-    //             lastName: element.bio.lastName,
-    //             email: element.contact.email,
-    //         },
-    //         org: {
-    //             name: org.name,
-    //             ein: org.ein,
-    //             img: org.logoUrl
-    //         },
-    //         transaction: {
-    //             amount: {
-    //                 total: amt.total,
-    //                 final: amt.final,
-    //                 // stripe_id: stripeId
-    //             }
-    //         }
-    //     }).save();
-    //     await officialQueue.addToQueue(newDonation.id);
-    //     element.charities.donations.push(newDonation);
-    //     element.membership.totalDonations += amt.final;
-    //     await element.save();
-        
-    // });
+    await Donation.deleteMany({});
+        let rand = Math.floor(Math.random() * 100);
+        let receipts = ['123987657', '9870987', '09834567', '98765678'];
+    let warehouses = ['dales', 'martins', 'discount', 'sales'];
+    allUsers.slice(0, 10).forEach(async (element, index) => {
+        let org = response[rand];
+        let randReceipt = receipts[Math.floor(Math.random() * receipts.length - 1)];
+        let randWarehouse = warehouses[Math.floor(Math.random() * receipts.length - 1)];
+        let newDonation = await new Donation({
+            user: {
+                user_id: element.id,
+                firstName: element.bio.firstName,
+                lastName: element.bio.lastName,
+                email: element.contact.email,
+            },
+            org: {
+                name: org.name,
+                ein: org.ein,
+                img: org.logoUrl
+            },
+            transaction: {
+                amount: {
+                    total: 2,
+                    final: 2,
+                },
+                items: [
+                    {
+                        name: 'Classic Hoodie',
+                        price: 30,
+                        config: { size: 'l', colors: ['blue', 'orange'], qty: 1 },
+                        img: 'https://res.cloudinary.com/demgmfow6/image/upload/v1673462847/helps/kje0cwgkhmg8ju3ivopc.jpg',
+                        code: 'price_1MPUf4JdX2WdfgCJByrw5EoK',
+                        sort: 0
+                    },
+                    {
+                        name: 'Classic Hoodie',
+                        price: 30,
+                        config: { size: 'l', colors: ['blue', 'green'], qty: 1 },
+                        img: 'https://res.cloudinary.com/demgmfow6/image/upload/v1673462847/helps/kje0cwgkhmg8ju3ivopc.jpg',
+                        code: 'price_1MPUf4JdX2WdfgCJByrw5EoK',
+                        sort: 0
+                    }
+                ],
+                shipTo: element.address.shipping,
+            },
+            fulfillment: {
+                order: {
+                    allReceipts: [randReceipt],
+                    allOrderedFrom: [randWarehouse]    
+                }
+            }
+        }).save();
+        console.log(newDonation.fulfillment);
+        await officialQueue.addToQueue(newDonation.id);
+        element.charities.donations.push(newDonation);
+        element.membership.totalDonations += 2;
+        await element.save();
+    });
+  
     console.log('ALL DONATIONS');
     console.log(officialQueue.history);
 };
 
-// seedDonation();
+seedDonation();
 
 let test = async () => {
     
     let q = await DonationQueue.findOne({ name: 'officialQueue' })
         .then(data => { return data }).catch(err => console.log(err));
+    let allDonations = await Donation.find({});
     
-    q.queue = [];
-    await q.save();
-    
-    // q.pool.delete('63e15e81f5efbe2cbba9e820');
-    // await q.save();
-    // let id = q.queue[0].toString();
-    // let currentDonation = await Donation.findById(id);
-    // console.log(currentDonation.transaction.items[0]);
+    console.log(allDonations[0].fulfillment);
     // await currentDonation.save();
     // q.queue = [];
     // await q.save();
@@ -283,7 +303,7 @@ let test = async () => {
     // currentUser.admin.permissions.push('admin');
     // await currentUser.save();
 };
-test();
+// test();
 // 
 let seedPurchases = async () => {
   
