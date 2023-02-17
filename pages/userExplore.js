@@ -6,14 +6,22 @@ import Navbar from '../components/Navbar';
 import { useEffect, useState } from 'react';
 import Pagination from '@mui/material/Pagination';
 import { ExploreContext } from '../Explore/components/ExploreContext';
-import { useContext} from 'react';
+import CharitySearch from '../Explore/components/CharitySearch';
+import { useContext } from 'react';
+import AltCause from '../Explore/components/AltCause';
+import SearchAccordion from '../Explore/components/SearchAccordion';
 
 
 function Explore({ user }) {
     console.log(user);
-    let { setCurrentUser, setAllLiked, setCurrentPage, currentPage, allLiked, orgs, currentUser } = useContext(ExploreContext);
+    let { setCurrentUser, setAllLiked, setCurrentPage, currentPage, allLiked, orgs, currentUser, setOrgs } = useContext(ExploreContext);
     let allInterests = [];
     let pageCalc = (currentPage - 1) * 10;
+
+    let [search, setSearch] = useState('');
+    let [searchResults, setSearchResults] = useState([]);
+
+
     if (currentUser !== undefined) {
         allInterests = Object.keys(currentUser.charities.interests);
     };
@@ -35,11 +43,10 @@ function Explore({ user }) {
         <Grid container >
             {
                     orgs === undefined ?
-                        allInterests.slice(pageCalc, pageCalc+10).map(function (element, index) {
-                            return <Grid item xs={12} style={{ marginBottom: '1%' }} key={index}>
-                            <Cause cause={element} />
-                            </Grid>
-                            })
+                        <SearchAccordion setSearch={setSearch}
+                            search={search} setSearchResults={setSearchResults}
+                            searchResults={searchResults} setOrgs={setOrgs}
+                        />
                     :
                         orgs.slice(pageCalc, pageCalc + 10).map(function (element, index) {
                             let liked = false;
@@ -57,8 +64,6 @@ function Explore({ user }) {
                             }
                     }) 
             }
-
-             <Pagination count={10} color="primary" onChange={(event) => handleChange(event)} />
             </Grid>
         </div>
     )

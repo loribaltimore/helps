@@ -86,7 +86,7 @@ app.prepare().then(() => {
     let errHandler = require('./middleware/errorHandling');
     let { getLanding } = require('./controllers/landing');
     let { charityByCause, likeCharity,
-        charityByTag, charityRecommended, unlikeCharity } = require('./Explore/controllers/charityControllers');
+        charityByTag, charityRecommended, unlikeCharity, charitySearch } = require('./Explore/controllers/charityControllers');
     let charityByName = require('./Explore/functions/charityByName');
     let { signupPost } = require('./SignUp/controllers/signupController');
     let { loginPost, logout } = require('./Login/controllers/loginControllers');
@@ -216,6 +216,7 @@ app.prepare().then(() => {
     server.get('/explore/charities/:cause', charityByCause);
     server.get('/products', productsGet);
     server.get('/charities/recommended', charityRecommended);
+    server.get('/charities/search', charitySearch)
     server.get('/session', sessionGet);
     server.post('/session', sessionPost);
     server.get('/tester', async (req, res, next) => {

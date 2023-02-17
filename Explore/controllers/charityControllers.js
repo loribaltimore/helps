@@ -69,3 +69,16 @@ module.exports.unlikeCharity = async (req, res, next) => {
     return res.send({ allLiked });
 };
 
+module.exports.charitySearch = async (req, res, next) => {
+    let { searchTerm } = req.query;
+    console.log(searchTerm);
+    let response = await axios({
+        method: 'get',
+        url: `https://partners.every.org/v0.2/search/${searchTerm}?apiKey=${process.env.CHARITY_API_KEY}`
+    }).then(data => { console.log(data.data); return data.data.searchResults }).catch(err => console.log(err))
+    
+    return res.send({ searchResults: response });
+};
+
+just have to update MasterPage to show searched charity results; 
+
