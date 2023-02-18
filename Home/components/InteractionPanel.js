@@ -11,12 +11,12 @@ function InteractionPanel(props) {
         router.push(route);
     }
     
-    return <div style={{textAlign: 'center', height: 'inherit'}}>
+    return <div style={{ textAlign: 'center', border: '1px solid black', borderRadius: '2rem', backgroundColor: 'white', width: '90%' }}>
                 <div style={{position: 'relative', top: '20rem', textAlign: 'center', color: 'white'}}>
             <h2>{msg}</h2>
             <Button variant="contained" onClick={() => handleClick()}>{btn}</Button>
                 </div>
-        <img src={img} style={{ width: '85%', height: 'inherit' }} />
+                <img src={img} style={{height: '10rem', width: '85%', position: 'relative', left: '0%', height: 'auto' }} />
            </div>
 
 };

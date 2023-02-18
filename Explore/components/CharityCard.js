@@ -14,7 +14,9 @@ import CharityPool from '../../checkout/components/CharityPool';
 function CharityCard(props) {
     let { org, cardType, liked, cart, setOpen, setCart, setToPool, total} = props;
     let [isHover, setIsHover] = useState(false);
-    console.log(cardType)
+
+    let maxDescLength = undefined;
+
 
     let styles = {
         like: {
@@ -65,9 +67,11 @@ true: [
                     <AddDonation org={org} cart={cart} setCart={setCart} pool={true}/>: ''
             ]        }
     };
+    org.description ?
+        maxDescLength = org.description.split('').slice(0, 240).join('') 
+        :
+        'Visit Profile for Description'
 
-    
-    let maxDescLength = org.description.split('').slice(0, 240).join('');
     return (
         <div>
             <Grid container style={{ border: '2px solid black', borderRadius: '1rem', width: '25rem', height: '30rem', backgroundColor: styles[cardType][liked], margin: '5%' }}>

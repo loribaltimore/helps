@@ -75,10 +75,10 @@ module.exports.charitySearch = async (req, res, next) => {
     let response = await axios({
         method: 'get',
         url: `https://partners.every.org/v0.2/search/${searchTerm}?apiKey=${process.env.CHARITY_API_KEY}`
-    }).then(data => { console.log(data.data); return data.data.searchResults }).catch(err => console.log(err))
+    }).then(data => {  return data.data.nonprofits }).catch(err => console.log(err))
     
     return res.send({ searchResults: response });
 };
 
-just have to update MasterPage to show searched charity results; 
+// just have to update MasterPage to show searched charity results;f 
 

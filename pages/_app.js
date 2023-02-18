@@ -8,7 +8,7 @@ import { ExploreProvider } from '../Explore/components/ExploreContext';
 export default function MyApp({ Component, pageProps }) {
 
     return (
-        <div>
+        <div >
             <MainProvider>
                 <SignUpProvider>
                         <Layout>

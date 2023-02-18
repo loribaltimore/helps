@@ -1,53 +1,44 @@
 import axios from 'axios';
-import Cause from '../Explore/components/Cause';
 import Grid from '@mui/material/Grid';
 import CharityCard from '../Explore/components/CharityCard';
 import Navbar from '../components/Navbar';
 import { useEffect, useState } from 'react';
-import Pagination from '@mui/material/Pagination';
 import { ExploreContext } from '../Explore/components/ExploreContext';
-import CharitySearch from '../Explore/components/CharitySearch';
 import { useContext } from 'react';
-import AltCause from '../Explore/components/AltCause';
 import SearchAccordion from '../Explore/components/SearchAccordion';
+import Recommended from '../Explore/components/Recommended';
 
 
-function Explore({ user }) {
-    console.log(user);
-    let { setCurrentUser, setAllLiked, setCurrentPage, currentPage, allLiked, orgs, currentUser, setOrgs } = useContext(ExploreContext);
-    let allInterests = [];
+function Explore({ user, allRecs, allLiked}) {
+    let { setCurrentPage, currentPage, orgs, setOrgs } = useContext(ExploreContext);
     let pageCalc = (currentPage - 1) * 10;
 
     let [search, setSearch] = useState('');
+    let [cause, setCause] = useState(undefined);
     let [searchResults, setSearchResults] = useState([]);
 
 
-    if (currentUser !== undefined) {
-        allInterests = Object.keys(currentUser.charities.interests);
-    };
-    useEffect(() => {
-        if (user !== undefined && currentUser === undefined) {
-            console.log('its undefined');
-            setCurrentUser(user);
-            setAllLiked(user.charities.liked.orgs.map(x => x.name));
-        }
-    }, []);
+    // if (currentUser !== undefined) {
+    //     allInterests = Object.keys(currentUser.charities.interests);
+    // };
 
     let handleChange = (event) => {
         setCurrentPage(event.target.innerText);
         window.scrollTo(0, 0);
     };
+
+    console.log(orgs);
     return (
         <div>
             <Navbar currentUser={user} />
         <Grid container >
-            {
-                    orgs === undefined ?
-                        <SearchAccordion setSearch={setSearch}
-                            search={search} setSearchResults={setSearchResults}
-                            searchResults={searchResults} setOrgs={setOrgs}
-                        />
-                    :
+                <SearchAccordion setSearch={setSearch}
+                    search={search} setSearchResults={setSearchResults}
+                    searchResults={searchResults} setOrgs={setOrgs}
+                    setCause={setCause} orgs={orgs} cause={cause}
+                            />
+                 {
+                        orgs !== undefined ?
                         orgs.slice(pageCalc, pageCalc + 10).map(function (element, index) {
                             let liked = false;
                             if (allLiked.indexOf(element.name) > -1) {
@@ -62,23 +53,20 @@ function Explore({ user }) {
                                     <CharityCard org={element} cardType={'like'} liked={liked}/>
                               </Grid> 
                             }
-                    }) 
+                        }) : <Recommended allRecs={allRecs} pageCalc={pageCalc} allLiked={allLiked} />
             }
             </Grid>
         </div>
     )
 };
 
-Explore.getInitialProps = async (ctxt) => {
-    let { user } = ctxt.req;
-    return { user: user._doc };
-    // let response = await axios({
-    //     method: 'get',
-    //     url: 'http://localhost:3000/tester'
-    // }).then(data => { return data}).catch(err => console.log(err));
-    // let { data } = response;
-    // let { currentUser } = data;
-    // return { user: currentUser };
+Explore.getInitialProps = async (ctxt) => { 
+    return {
+        user: ctxt.req.user,
+        allRecs: ctxt.query.allRecs,
+        interestsByName: ctxt.query.interestsByName,
+        allLiked: ctxt.query.allLiked
+    }
 }   
 
 export default Explore;

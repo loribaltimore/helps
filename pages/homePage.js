@@ -7,7 +7,6 @@ import { MainContext } from '../components/MainContext';
 import { useContext, useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Flash from '../components/Flash';
-import ItemConfiguration from '../Home/components/ItemConfiguration';
 
 function Home({user, products, flash}) {
     let [productsAndInteractionsMixed, setProductsAndInteractionsMixed ] = useState(undefined)
@@ -40,7 +39,7 @@ function Home({user, products, flash}) {
 
     
     return (
-    <div>
+    <div  style={{marginBottom: '5%'}}>
             <Navbar currentUser={user} />
             {
                 renderFlash === true ?

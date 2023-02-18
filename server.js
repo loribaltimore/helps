@@ -143,15 +143,7 @@ app.prepare().then(() => {
     })
 
     server.get('/explore', async (req, res, next) => {
-        app.render(req, res, '/userExplore', {});
-    });
-
-    server.get('/donate', async (req, res, next) => {
-        app.render(req, res, '/donationPage', {});
-    });
-
-    server.get('/recommended', async (req, res, next) => {
-    let currentUser = await User.findById(req.user._id);
+        let currentUser = await User.findById(req.user._id);
         let topInterests = currentUser.sortedInterests.slice(0, 3);
     let allRecs = [];
     let apiKey = process.env.CHARITY_API_KEY;
@@ -165,7 +157,12 @@ app.prepare().then(() => {
         allRecs.push(...response);
     };
         let interestsByName = topInterests.map(x => x[0]);
-       return app.render(req, res, '/userRecommended', {allRecs, interestsByName});
+        let allLiked = currentUser.charities.liked.orgs.map(x => x.name);
+        app.render(req, res, '/userExplore', {allRecs, interestsByName, allLiked});
+    });
+
+    server.get('/donate', async (req, res, next) => {
+        app.render(req, res, '/donationPage', {});
     });
 
     server.get('/master', async (req, res, next) => {  
