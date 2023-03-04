@@ -20,8 +20,9 @@ app.prepare().then(() => {
     
     //Database Connection
     let mongoose = require('mongoose');
-    mongoose.connect('mongodb://localhost:27017/helps')
-        .then(console.log('Database is Live')).catch(err => console.log(err));
+    mongoose.connect('mongodb://localhost:27017/helps', {
+        family: 4
+    }).then(console.log('Database is Live')).catch(err => console.log(err));
     
     //Express Connection
     let express = require('express');
